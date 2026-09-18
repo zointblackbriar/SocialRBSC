@@ -1,0 +1,36 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/// @dev provides a simple role creator entry point; can choose concrete roles.
+contract $!{contractName} is RoleCreator {
+    function createFor(bytes32 _roleAddress) override public returns (ComponentRole) {
+        // default example return
+        return new DroneRole(address(0), address(0));
+    }
+}
+
+// legacy examples left for reference
+contract SampleRole1Creator is RoleCreator {
+    function createFor(bytes32 _roleAddress) override public returns (ComponentRole) {
+        return new SampleRole1();
+    }
+}
+
+contract SampleRole1UpdatedCreator is RoleCreator {
+    function createFor(bytes32 _roleAddress) override public returns (ComponentRole) {
+        return new SampleRole1Updated();
+    }
+}
+
+contract SampleRole2Creator is RoleCreator {
+    function createFor(bytes32 _roleAddress) override public returns (ComponentRole) {
+        return new SampleRole2();
+    }
+}
+

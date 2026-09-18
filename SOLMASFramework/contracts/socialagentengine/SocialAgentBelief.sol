@@ -1,0 +1,111 @@
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.13;
+
+
+/// @title SocialAgent Belief
+/// @author Orcun Oruc
+/// @notice Beliefs can be seen as the
+//informative component of the system. A belief base is a set of beliefs, each of which
+//has a name and a value (@Source: BDI4Jade)
+/// @dev Beliefs (Knowledge about the world)
+/// @custom:experimental This is an experimental contract for the implementation of SocialAgentBDI.
+contract SocialAgentBelief {
+    // For instance, an agent might believe that a door is locked based on its observations or previous experiences
+    address public beliefowner;
+
+//    modifier beliefModifier {
+//        require(msg.sender == beliefowner, "this contract only can called from beliefowner contract");
+//        _;
+//    }
+
+    struct Belief {
+        string name;
+        uint value;
+    }
+
+    mapping (string => Belief) public beliefs; // you can convert to bytes32
+    string[] public beliefNames;
+    address public capability;
+    bool public beliefUpdated = false;
+
+    constructor () {
+        capability = msg.sender;
+    }
+
+
+    modifier onlyCapability() {
+        require(msg.sender == capability, "Only capability can modify the Belief base");
+        _;
+    }
+
+    /// @notice we should add beliefs with the following function
+    /// @dev string data structure has been used for this function
+    /// @param _name of the belief
+    /// @param _value of the named belief
+    function addBelief(string memory _name, uint _value) public{
+        Belief memory newBelief;
+        newBelief.name = _name;
+        newBelief.value = _value;
+        beliefs[_name] = newBelief;
+        beliefNames.push(_name);
+    }
+
+    /// @notice we should get belief details with the following function
+    /// @dev string data structure has been used for this function
+    /// @param _name of the belief
+
+    function getBelief(string memory _name) public view returns (uint) {
+        return beliefs[_name].value;
+    }
+
+    /// @notice we should update existing beliefs
+    /// @dev it does not work as expected
+    /// @param _name of the belief
+    /// @param _value of the belief
+    function updateBelief(string memory _name, uint _value) public {
+        // compare the name of belief
+        require(!compare(beliefs[_name].name, ""), "Belief does not exist");
+        beliefs[_name].value = _value;
+        beliefUpdated = true;
+    }
+
+    /// @notice we should check beliefs in the BDI System
+    /// @dev check with the name of existing belief
+    /// @param _name of the belief
+    function hasBelief(string memory _name) public view returns(bool) {
+        //return beliefs[name].name != "";
+        return compare(beliefs[_name].name, _name);
+    }
+
+    /// @notice we should remove beliefs in the BDI System
+    /// @dev remove the name of existing belief
+    /// @param _name of the belief
+    function removeBelief(string memory _name) public returns(bool) {
+        require(!compare(beliefs[_name].name, "Belief does not exist"));
+
+        delete beliefs[_name];
+
+        //scan for the belief belief names
+        for(uint256 i = 0; i < beliefNames.length; i++) {
+            if(compare(beliefNames[i], _name)) {
+                beliefNames[i] = beliefNames[beliefNames.length - 1];
+                beliefNames.pop();
+                break;
+            }
+        }
+
+        return true;
+    }
+
+    function getBeliefNamesLength() public view returns(uint) {
+        return beliefNames.length;
+    }
+
+
+    function compare(string memory _str1, string memory _str2) public pure returns (bool) {
+        return keccak256(abi.encodePacked(_str1)) == keccak256(abi.encodePacked(_str2));
+    }
+}
+
+
+

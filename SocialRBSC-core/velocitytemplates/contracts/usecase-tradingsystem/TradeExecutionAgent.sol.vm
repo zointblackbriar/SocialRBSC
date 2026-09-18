@@ -1,0 +1,29 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/// @title Trade Execution Agent Compartment
+contract $!{contractName} is SocialAgent {
+    constructor(string memory _name) {
+        setName(_name);
+    }
+
+    /// @notice receive a recommendation
+    function receiveRecommendation(string memory rec) external {
+        emit RecommendationReceived(rec);
+    }
+
+    /// @notice execute trade stub
+    function executeTrade(bytes32 symbol, uint256 size, uint256 price) external {
+        // stub; in reality would call exchange APIs
+        emit TradeExecuted(symbol, size, price);
+    }
+
+    event RecommendationReceived(string rec);
+    event TradeExecuted(bytes32 symbol, uint256 size, uint256 price);
+}

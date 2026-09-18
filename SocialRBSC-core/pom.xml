@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--<groupId>de.tudresden.multiagentsystem</groupId>
+    <artifactId>GASMASK</artifactId>
+    <version>1.0-SNAPSHOT</version>-->
+    <groupId>de.tudresden.mas</groupId>
+    <artifactId>SocialRBSC</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <build>
+        <!-- include velocity template files on the classpath so Velocity.getTemplate
+             can find them during unit and integration tests.  templates live in the
+             sibling directory at project root. -->
+        <resources>
+            <resource>
+                <directory>${project.basedir}/velocitytemplates</directory>
+                <includes>
+                    <include>**/*.vm</include>
+                </includes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>${project.basedir}/velocitytemplates</directory>
+                <includes>
+                    <include>**/*.vm</include>
+                </includes>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.1</version>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                    <compilerArgument>-proc:none</compilerArgument>
+                    <showWarnings>true</showWarnings>
+                    <compilerArgs>
+                        <arg>--module-path</arg>
+                        <arg>${project.build.sourceDirectory}</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.web3j</groupId>
+                <artifactId>web3j-maven-plugin</artifactId>
+                <version>5.0.2</version>
+
+                <!-- Pin web3j-sokt to 0.7.0: the version bundled with the plugin
+                     (0.6.0) parses the official solc-bin release index strictly and
+                     fails on the newly added 'linux_arm64_url' keys. 0.7.0 resolves
+                     the official binary index and bundles releases with arm64 URLs. -->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.web3j</groupId>
+                        <artifactId>web3j-sokt</artifactId>
+                        <version>0.7.0</version>
+                    </dependency>
+                </dependencies>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-sources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <soliditySourceFiles>
+                        <directory>SOLMASFramework/contracts/</directory>
+                        <includes>
+                            <include>**/*.sol</include>
+                        </includes>
+                    </soliditySourceFiles>
+                    <outputDirectory>
+                        <java></java>
+                        <abi></abi>
+                        <bin></bin>
+                    </outputDirectory>
+                    <contract>
+                        <excludes>
+<!--                            <exclude>EventSchema</exclude>-->
+<!--                            <exclude>SocialGoal</exclude>-->
+                            <exclude>Diamond</exclude>
+                            <exclude>LibDiamond</exclude>
+                            <exclude>SocialAgentMotivationalConstraint</exclude>
+                            <exclude>MealPreparation</exclude>
+                            <exclude>MealPlan</exclude>
+                            <exclude>RuleBasedReasoningMealPreparation</exclude>
+                            <exclude>SaladMaking</exclude>
+                            <exclude>SandwichMaking</exclude>
+                        </excludes>
+                    </contract>
+                    <nativeJavaType>true</nativeJavaType>
+                    <packageName>de.tudresden.codegenerator.autogen</packageName>
+                    <!-- remove unsupported parameters; solc is managed by sokt and will
+                         install whichever version matches the pragmas (0.8.13 for our
+                         contracts).  To enforce a Docker container you can pre-populate
+                         the PATH with a binary from ethereum/solc:0.8.13 or supply a
+                         <solcPath> element pointing at it. -->
+                </configuration>
+            </plugin>
+            <!-- Add integration test source directory -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>add-integration-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/it/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-integration-test-resources</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>add-test-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/it/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Unit tests (Surefire) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M7</version>
+                <configuration>
+                    <!-- Exclude integration tests and autogenerated code from unit test phase -->
+                    <excludes>
+                        <exclude>**/*IT.java</exclude>
+                        <exclude>**/*IntegrationTest.java</exclude>
+                        <exclude>**/autogen/**</exclude>
+                        <exclude>**/generatedsmartcontract/**</exclude>
+                        <exclude>**/generated-sources/**</exclude>
+                    </excludes>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>${junit5.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>junit-vintage-engine</artifactId>
+                        <version>${junit5.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!-- Integration tests (Failsafe) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.0.0-M7</version>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                        <include>**/*IntegrationTest.java</include>
+                    </includes>
+                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <source>21</source>
+                    <reportOutputDirectory>reports/</reportOutputDirectory>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>4.0.0-M9</version>
+                <configuration>
+                    <tempWebappDirectory>${basedir}/target/site</tempWebappDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+            </plugin>
+            <!-- pmd plugin for static analyzer checker -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.13.0</version> <!-- or use version from pluginManagement -->
+                <configuration>
+                    <linkXRef>true</linkXRef>
+                    <sourceEncoding>utf-8</sourceEncoding>
+                    <minimumTokens>100</minimumTokens>
+                    <targetJdk>1.8</targetJdk>
+                    <format>xml</format>
+                    <excludes>
+                        <exclude>**/generated/*.java</exclude>
+                    </excludes>
+                    <excludeRoots>
+                        <excludeRoot>target/generated-sources/*</excludeRoot>
+                    </excludeRoots>
+                    <outputDirectory>reports/pmd/</outputDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <failsOnError>false</failsOnError>
+                    <outputFile>reports/checkstyle/checkstyle.xml</outputFile>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven.surefire.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+            <version>${kohsuke-metainf.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+            <version>${web3j.core.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+        <!-- RxJava Dependency -->
+        <!-- https://mvnrepository.com/artifact/io.reactivex/rxjava -->
+        <dependency>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava</artifactId>
+            <version>${rxjava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.qdox</groupId>
+            <artifactId>qdox</artifactId>
+            <version>${qdox.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>${apachevelocity.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-tools</artifactId>
+            <version>${apachevelocitytools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.activecomponents.jadex</groupId>
+            <artifactId>jadex-kernel-bdiv3</artifactId>
+            <version>${jadex.activex.component.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup</groupId>
+            <artifactId>javapoet</artifactId>
+            <version>${javapoet.version}</version>
+        </dependency>
+
+        <!-- External Annotation Processor Logging -->
+        <dependency>
+            <groupId>com.cosium.logging</groupId>
+            <artifactId>annotation-processor-logger</artifactId>
+            <version>${annotation-processor-logger.version}</version>
+        </dependency>
+        <!-- JUnit 5 (Jupiter) dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit5.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <!-- JUnit 4 for legacy tests - remove when all tests are migrated to JUnit 5 -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit5.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>stringtemplate</artifactId>
+            <version>${stringtemplate.version}</version>
+        </dependency>
+        <!-- solidity parser test -->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>${antlr4-runtime.version}</version>
+        </dependency>
+
+        <!-- this is for compile testing with annotations -->
+        <dependency>
+            <groupId>com.google.testing.compile</groupId>
+            <artifactId>compile-testing</artifactId>
+            <version>${google.compiler.testing.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- google auto service add annotations from the processor automatically to META-INF folder. No Need to manual typing for each annotation -->
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
+            <version>${com.google.auto.service.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${org.json.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j-simple.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>${hamcrest-all.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.auto.value</groupId>
+            <artifactId>auto-value</artifactId>
+            <version>${com.google.auto.value.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>tech.pegasys</groupId>
+            <artifactId>jc-kzg-4844</artifactId>
+            <version>1.0.0</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- The Ethereum Core Package, which is connected to the EthereumJ Project -->
+    <!-- Do not delete the following downloader -->
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
+    </repositories>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <java.version>21</java.version>
+        <jsonpath.version>2.4.0</jsonpath.version>
+        <logback.version>1.2.3</logback.version>
+        <compiler.plugin.version>3.1</compiler.plugin.version>
+        <tilab.jade.version>4.5.0</tilab.jade.version>
+        <tilab.jade.testversion>1.13.0</tilab.jade.testversion>
+        <algosdk.version>1.11.0-beta-1</algosdk.version>
+        <web3j.core.version>4.14.0</web3j.core.version>
+        <web3j.maven.version>4.14.0</web3j.maven.version>
+        <com.google.auto.service.version>1.1.1</com.google.auto.service.version>
+        <javapoet.version>1.13.0</javapoet.version>
+        <annotation-processor-logger.version>1.0</annotation-processor-logger.version>
+        <jadexversion>4.0.241</jadexversion>
+        <stringtemplate.version>4.0.2</stringtemplate.version>
+        <apachevelocity.version>1.7</apachevelocity.version>
+        <apachevelocitytools.version>2.0</apachevelocitytools.version>
+        <qdox.version>1.10.1</qdox.version>
+        <rxjava.version>1.3.8</rxjava.version>
+        <maven.surefire.version>2.22.2</maven.surefire.version>
+        <kohsuke-metainf.version>1.1</kohsuke-metainf.version>
+        <fabrik.sdkjava.version>1.4.7</fabrik.sdkjava.version>
+        <fabrik.gatewayjava.version>2.0.0</fabrik.gatewayjava.version>
+        <google.compiler.testing.version>0.21.0</google.compiler.testing.version>
+        <fabric-chaincode-java.version>2.5.0</fabric-chaincode-java.version>
+        <fabric-gateway-java.version>2.2.0</fabric-gateway-java.version>
+        <maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
+        <junit4.version.edited>4.13.1</junit4.version.edited>
+        <slf4j-api.version>2.0.0-alpha7</slf4j-api.version>
+        <slf4j-simple.version>2.0.0-alpha7</slf4j-simple.version>
+        <hamcrest-all.version>1.3</hamcrest-all.version>
+        <com.google.auto.value.version>1.10</com.google.auto.value.version>
+        <annotation-processor-logger.version>1.0</annotation-processor-logger.version>
+        <antlr4-runtime.version>4.13.0</antlr4-runtime.version>
+        <mockito-core.version>5.12.0</mockito-core.version>
+        <junit5.version>5.10.2</junit5.version>
+        <commons.io.version>2.11.0</commons.io.version>
+        <jadex.activex.component.version>4.0.265</jadex.activex.component.version>
+        <org.json.version>20240303</org.json.version>
+    </properties>
+
+
+</project>

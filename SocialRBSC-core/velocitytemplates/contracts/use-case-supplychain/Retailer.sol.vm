@@ -1,0 +1,60 @@
+//SPDX-License-Identifier: AGPL-3.0
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+// @title Supply Chain Network implementation
+
+/// @dev a new role has been created
+contract $!{contractName} is ComponentRole {
+    uint public itemsInInventoryRetailer;
+
+    function pushInventory(uint _item) public {
+        itemsInInventoryRetailer += _item;
+    }
+
+    function popInventory(uint _item) public {
+        require(
+            _item < itemsInInventoryRetailer,
+            "we need to check boundary for itemsInInventory"
+        );
+        itemsInInventoryRetailer -= _item;
+    }
+
+    function getInventoryStatus() public view returns(uint) {
+        return itemsInInventoryRetailer;
+    }
+
+    // --- use-case integration ------------------------------------------------
+    // data structures for delivery requests sent to the Coordinator
+    struct DeliveryRequest {
+        bytes32 destination;
+        uint256 timeWindow;
+    }
+
+    DeliveryRequest[] public requests;
+
+    event DeliveryRequested(
+        address indexed retailer,
+        bytes32 destination,
+        uint256 timeWindow,
+        uint256 indexed requestId
+    );
+
+    /// @notice Retailer creates a delivery request for the central coordinator
+    /// @param destination encoded delivery location or consumer identifier
+    /// @param timeWindow promised delivery window (e.g. unix timestamp)
+    function submitDeliveryRequest(bytes32 destination, uint256 timeWindow) public {
+        requests.push(DeliveryRequest(destination, timeWindow));
+        emit DeliveryRequested(address(this), destination, timeWindow, requests.length - 1);
+    }
+
+    function playContractForIdentity() public pure returns(string memory){
+        return "it has been played";
+    }
+}
+

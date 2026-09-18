@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+contract $!{contractName} is ComponentRole {
+    // activate a compartment (i.e. set the team/context) through the core
+    function activateCompartmentContract(address compartment) external {
+        core.activateCompartment(compartment);
+    }
+
+    function deactivateCompartmentContract() external {
+        core.deactivateCompartment();
+    }
+}

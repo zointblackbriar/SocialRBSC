@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+contract $!{contractName} is Retailer {
+
+    address public owner;
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(owner == msg.sender, "Otherwise throw an exception regarding onlyOwner is necessary");
+        _;
+    }
+}
+

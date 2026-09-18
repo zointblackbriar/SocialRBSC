@@ -1,0 +1,58 @@
+//SPDX-License-Identifier: AGPL-3.0
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+/// @title Single ended queue for Deliberation Cycle requests
+/// @dev single ended queue is useful for Deliberation cycle -- Messages will be represented by eventss
+/// @author Orcun Oruc
+/// @dev It consists of enqueue, dequeue for string and uint types.
+contract $!{contractName} {
+    mapping(uint256 => uint) public queue;
+    mapping(uint256 => string) public eventqueue;
+    uint public entrance = 1; //first
+    uint public rear = 0; //last
+    string public dataString;
+    uint256 public dataUint;
+    string public testMessage;
+
+    // @dev Enqueue operation for the BDI queue.
+    function enqueue(uint _data) public {
+        rear += 1;
+        queue[rear] = _data;
+    }
+
+    // @dev Event message will be dequeued from the queue
+    function dequeue() public returns (uint256) {
+        require(rear >= entrance); //non-empty queue
+        dataUint = queue[entrance];
+        delete queue[entrance];
+        entrance += 1;
+        return dataUint;
+    }
+
+    // @dev Event message will be inserted to the queue
+    function enqueueEvent(string memory _data) public {
+        rear += 1;
+        eventqueue[rear] = _data;
+    }
+
+    // @dev dequeue operation for the BDI queue.
+    function dequeueEvent() public returns (string memory) {
+        require(rear >= entrance); //non-empty queue
+        dataString = eventqueue[entrance];
+        delete eventqueue[entrance];
+        entrance += 1;
+        return dataString;
+    }
+
+    function testFunction(string memory _sampleMessage) public returns(string memory) {
+        testMessage = _sampleMessage;
+        return testMessage;
+    }
+
+}
+

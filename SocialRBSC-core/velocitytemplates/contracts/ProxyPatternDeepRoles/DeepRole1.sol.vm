@@ -1,0 +1,33 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+// @dev EIP-1822 UUPS
+contract $!{contractName} is ComponentRole, Proxiable {
+
+    address public owner;
+    uint public myUint;
+    bool public initialized = false;
+
+    function initialize() public {
+        require(owner == address(0), "Already initialized");
+        require(!initialized, "Already initialized");
+        owner = msg.sender;
+        initialized = true;
+    }
+
+    function increment() public {
+        myUint++;
+    }
+
+    function updateCode(address newCode) public {
+        require(msg.sender == owner, "Only owner can update the code");
+        updateCodeAddress(newCode); // This will refer the new updated Role contract
+    }
+}
+

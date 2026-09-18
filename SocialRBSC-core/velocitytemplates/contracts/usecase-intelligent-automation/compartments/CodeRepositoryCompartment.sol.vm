@@ -1,0 +1,18 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/**
+ * @title CodeRepositoryCompartment
+ * @dev Represents the CI/CD pipeline or code repository entity.
+ */
+contract $!{contractName} is Compartment {
+    constructor() {
+        createCompartmentID("CodeRepository");
+    }
+}

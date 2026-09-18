@@ -1,0 +1,6 @@
+services:
+  ganache:
+    build: .
+    ports:
+      - "8545:8545"
+    command: ganache-cli -m "world reopen cute forward vintage okay drink margin piano buffalo autumn awful" -h 0.0.0.0

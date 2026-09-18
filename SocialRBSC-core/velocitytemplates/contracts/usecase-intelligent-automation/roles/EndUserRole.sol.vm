@@ -1,0 +1,15 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/**
+ * @title EndUserRole
+ * @dev Marker role representing the end user/customer in the system.
+ */
+contract $!{contractName} is ComponentRole {
+}

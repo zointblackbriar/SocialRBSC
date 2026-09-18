@@ -1,0 +1,99 @@
+//SPDX-License-Identifier: AGPL-3.0
+pragma solidity 0.8.13;
+
+/// @title Representation of states in an agent's mentality.
+/// @dev We have the aforementioned state to represent agent mental behaviors. Alternatively, we can program an agent with the following states.
+/// @dev NEWAGENT : When an agent has not yet started
+/// @dev RUNNABLEAGENT: When an agent is being executed
+/// @dev BLOCKEDAGENT: When an agent is blocked and is waiting for a monitor lock
+/// @dev ERMINATED: When an agent has exited
+/// @dev PLAN: When a plan initiated by an agent.
+/// @dev NEWAGENT, RUNNABLEAGENT, BLOCKEDAGENT, TERMINATED, EXPLORING, PLANNING
+/// @author Orcun Oruc
+
+contract SocialAgentStateMachine {
+    // Exploring and Planning external states which can be associated with the environment and society that consist of other social agents.
+    enum AgentStates {
+        NEWAGENT,
+        RUNNABLEAGENT,
+        TERMINATEDAGENT,
+        PLANNING
+    }
+
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+    /// @dev Exploring Agent states hare
+    AgentStates public agentState = AgentStates.NEWAGENT;
+
+    uint public agentCreationTime = block.timestamp;
+
+    /// @dev agent state checking at this point
+    modifier atState(AgentStates _state) {
+        require(agentState == _state, "agent state should be complied with the assigned state");
+        _;
+    }
+
+    modifier transitionAgentAfter() {
+        _;
+        nextState();
+    }
+
+    /// @dev in order to set time-sensitive state changes
+    modifier timedTransitions() {
+        if (
+            agentState == AgentStates.RUNNABLEAGENT &&
+            block.timestamp >= agentCreationTime + 1 days
+        ) {
+            nextState();
+        }
+
+        if (
+            agentState == AgentStates.PLANNING &&
+            block.timestamp >= agentCreationTime + 2 days
+        ) {
+            nextState();
+        }
+        _;
+    }
+
+
+    /// @dev agent termination with TERMINATEDAGENT state.
+    function agentEnding()
+        public
+        payable
+        timedTransitions
+        atState(AgentStates.TERMINATEDAGENT)
+    {
+        //Implement the agent ending state here
+        require(msg.sender == owner, "Only the owner can terminate the agent");
+        selfdestruct(payable(owner));
+    }
+
+    /// @dev confirm a new state of an agent by iterating the state with a function
+    function nextState() public {
+        agentState = AgentStates(uint(agentState) + 1);
+    }
+
+    /// @dev transition of the next state is controlled by the owner of smart contract.
+    function manualTransition() public {
+        require(msg.sender == owner, "Only the owner can transition states");
+        nextState();
+    }
+
+    // @dev is for caching all other types of calls (with or without Ether) when no other function matches the call.
+    fallback() external payable  {
+        revert("Contract does not accept direct payments");
+    }
+
+    // @dev is for receiving Ether with no data.
+    receive() external payable {
+        // Logic to handle Ether transfer
+    }
+
+}
+
+
+

@@ -1,0 +1,27 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+// An assistant agent that can help the cook with the meal preparation
+contract $!{contractName} is SocialAgent {
+    MealPreparation public mealPreparation;
+
+    constructor(address _mealPreparationAddress, string memory _name) {
+        mealPreparation = MealPreparation(_mealPreparationAddress);
+        setName(_name);
+    }
+
+
+    function assistBoil() external {
+        mealPreparation.boilWater();
+    }
+
+    function assistCook() external {
+        mealPreparation.cookPasta();
+    }
+}

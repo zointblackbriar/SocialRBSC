@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.13;
+
+
+
+/// @title plan assignment for Social Agent Plan execution
+/// @author Orcun Oruc
+contract SocialPlan {
+
+    /// @dev plan status should be the FSM-based implementation
+    enum PlanStatus {NotExecuted, Executed, Succeeded, Failed}
+
+    // @dev Plan will be represented as structs
+    struct SocialPlanStruct {
+        string name;
+        PlanStatus status;
+    }
+
+    mapping(address => mapping(string => SocialPlanStruct)) public socialPlans;
+    mapping(address => mapping(string => bool)) public formulas;
+
+    /// @dev execution of the plan
+    function executePlan(string memory planName, PlanStatus status) external {
+        socialPlans[msg.sender][planName] = SocialPlanStruct(planName, status);
+    }
+
+    /// @dev Is the social formula necessary
+    function isSocialAgentFormulaTrue(string memory formulaName, string memory planName) external view returns(bool){
+        return socialPlans[msg.sender][planName].status == PlanStatus.Executed && formulas[msg.sender][formulaName];
+    }
+
+    /// @dev evaluation of the formula
+    function evaluateFormula(string memory formulaName, bool value) external {
+        formulas[msg.sender][formulaName] = value; //which value ?
+    }
+}
+
+
+

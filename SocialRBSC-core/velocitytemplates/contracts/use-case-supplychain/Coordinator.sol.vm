@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+// @title Central Coordinator Agent role
+
+/// @dev represents the orchestrator responsible for global planning and
+///      fleet optimisation.  This is a minimal stub that can be extended as
+///      the use‑case evolves.
+contract $!{contractName} is ComponentRole {
+    // example state
+    uint public jobsScheduled;
+
+    function scheduleJob() public {
+        jobsScheduled += 1;
+    }
+
+    function getStatus() public view returns (uint) {
+        return jobsScheduled;
+    }
+
+    function playContractForIdentity() public pure returns (string memory) {
+        return "coordinator active";
+    }
+}

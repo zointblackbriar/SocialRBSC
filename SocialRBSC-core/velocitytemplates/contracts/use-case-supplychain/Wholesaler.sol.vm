@@ -1,0 +1,68 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+// @title Supply Chain Network implementation
+
+/// @dev a new role has been created
+contract $!{contractName} is ComponentRole {
+    uint public itemsInInventoryWholeSaler;
+
+    function pushInventory(uint _item) public {
+        itemsInInventoryWholeSaler += _item;
+    }
+
+    function popInventory(uint _item) public {
+        require(
+            _item < itemsInInventoryWholeSaler,
+            "we need to check boundary for itemsInInventory"
+        );
+        itemsInInventoryWholeSaler -= _item;
+    }
+
+    function getInventoryStatus() view public returns(uint){
+        return itemsInInventoryWholeSaler;
+    }
+
+    // --- use-case integration ------------------------------------------------
+    struct BulkManifest {
+        bytes32[] stops;
+        uint256[] timeWindows;
+    }
+
+    // internal storage, public accessor below
+    BulkManifest[] private manifests;
+
+    event BulkManifestSubmitted(
+        address indexed wholesaler,
+        bytes32[] stops,
+        uint256[] timeWindows,
+        uint256 indexed manifestId
+    );
+
+    /// @notice submit a bulk delivery manifest covering multiple retailer stops
+    /// @param stops encoded identifiers for each stop
+    /// @param timeWindows promised window for each stop
+    function submitBulkManifest(bytes32[] memory stops, uint256[] memory timeWindows) public {
+        require(stops.length == timeWindows.length, "length mismatch");
+        manifests.push(BulkManifest(stops, timeWindows));
+        emit BulkManifestSubmitted(address(this), stops, timeWindows, manifests.length - 1);
+    }
+
+    /// @notice return a stored manifest by index
+    function getManifest(uint256 idx) public view returns (bytes32[] memory stops, uint256[] memory timeWindows) {
+        BulkManifest storage m = manifests[idx];
+        return (m.stops, m.timeWindows);
+    }
+
+    function playContractForIdentity() public pure returns(string memory){
+        return "it has been played";
+    }
+
+}
+

@@ -1,0 +1,46 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.13;
+
+import "../goalplantree/GoalPlanTree.sol";
+
+/// @title Simple facade for interacting with GoalPlanTree within the trading use case
+contract TradingGoalManager {
+    GoalPlanTree public tree;
+
+    constructor() {
+        tree = new GoalPlanTree();
+    }
+
+    // allow external accounts to add goals/plans via the underlying tree
+    function addGoal(string memory name, string memory parent, string memory data, uint avoidance, uint willingness) external {
+        tree.add(name, parent, data, avoidance, willingness);
+    }
+
+    function updateGoal(string memory name, string memory parent, string memory data, uint avoidance, uint willingness) external {
+        tree.update(name, parent, data, avoidance, willingness);
+    }
+
+    function removeGoal(string memory name, string memory parent) external {
+        tree.remove(name, parent);
+    }
+
+    function computeHash(string memory parent, string memory name) external {
+        tree.keccakProcess(parent, name);
+    }
+
+    function dropRecursively(string memory parent, string memory name) external {
+        tree.dropGoalRecursively(parent, name);
+    }
+
+    function linkPlan(string memory planName, string memory goalName) external {
+        tree.linkPlanToGoal(planName, goalName);
+    }
+
+    function executePlanEntry(string memory planName) external {
+        tree.executePlan(planName);
+    }
+
+    function isDropped(string memory goalName, string memory parent) external view returns (bool) {
+        return tree.isDroppedGoal(goalName, parent);
+    }
+}

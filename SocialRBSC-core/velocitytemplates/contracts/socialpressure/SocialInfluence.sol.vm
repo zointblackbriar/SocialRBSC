@@ -1,0 +1,101 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+contract $!{contractName} {
+
+    struct SocialAgent {
+        address id;
+        bool exists;
+    }
+
+    // Empty constructor is enough
+    constructor(){
+
+    }
+
+    // hashtables will be inserted
+    mapping(address => SocialAgent) public socialAgents;
+    mapping(string => bool) public expectedActions;
+    mapping(address => mapping(string => bool)) public norms;
+    mapping(address => mapping(address => mapping(string => bool))) public influences;
+    mapping(address => mapping(string => bool)) public pressures;
+    mapping(address => mapping(string => bool)) public actions;
+
+    //protector of the Social Agent Definition
+    modifier onlySocialAgent(address _socialAgent) {
+        require(socialAgents[_socialAgent].exists, "Not a registered social agent.");
+        _;
+    }
+    //Generic item set
+    function registerSocialAgent(address _socialAgent) public {
+        socialAgents[_socialAgent] = SocialAgent({id: _socialAgent, exists: true});
+    }
+
+    //get registerd social agents
+    function getRegisteredSocialAgent(address _socialAgent) public view returns(address, bool) {
+        SocialAgent memory agent = socialAgents[_socialAgent];
+        return (agent.id, agent.exists);
+    }
+    //Generic item set
+    function setExpectedAction(string memory _action, bool _expected) public {
+        expectedActions[_action] = _expected;
+    }
+    //Generic item set
+    function setNorm(address _socialAgent, string memory _action, bool _expected) public onlySocialAgent(_socialAgent) {
+        norms[_socialAgent][_action] = _expected;
+    }
+
+    //Generic item set
+    function setInfluence(address _socialAgent, address _influencedAgent, string memory _action, bool _influenced) public onlySocialAgent(_socialAgent){
+        influences[_socialAgent][_influencedAgent][_action] = _influenced;
+    }
+
+    // Setpressure function should be organized
+    function setPressure(address _socialAgent, string memory _action, bool _pressured) public onlySocialAgent(_socialAgent) {
+        pressures[_socialAgent][_action] = _pressured;
+    }
+
+    function setAction(address _socialAgent, string memory _action, bool _performed) public onlySocialAgent(_socialAgent) {
+        actions[_socialAgent][_action] = _performed;
+    }
+
+    function groupMembership(address _group, address _socialAgent) public view returns(bool) {
+        // Implement group membership logic here.
+        return true;
+    }
+
+    function friendSocialAgent(address _socialAgent, address _friend) public view returns(bool) {
+        // Implement a social agent logic here
+        // For now, do it in a simple way
+        return true;
+    }
+
+    function applyNormDefinition(address _socialAgent) public {
+        if(groupMembership(_socialAgent, _socialAgent)) {
+            norms[_socialAgent]["attended_event"] = true;
+        }
+    }
+
+    function applyInfluenceDefinition(address _socialAgent, address _friend) public {
+        if(friendSocialAgent(_socialAgent, _friend) && actions[_socialAgent]["attend_event"]) {
+            influences[_socialAgent][_friend]["attend_event"] = true;
+        }
+    }
+
+    function applyPressureDefinition(address _socialAgent, address _friend) public {
+        if(influences[_friend][_socialAgent]["attend_event"]) {
+            pressures[_socialAgent]["attend_event"] = true;
+        }
+    }
+
+    function applyActionCompliance(address _socialAgent) public {
+        if(pressures[_socialAgent]["attend_event"] && norms[_socialAgent]["attend_event"]) {
+            actions[_socialAgent]["attend_event"] = true;
+        }
+    }
+}

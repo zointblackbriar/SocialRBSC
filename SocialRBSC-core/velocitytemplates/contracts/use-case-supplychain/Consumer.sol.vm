@@ -1,0 +1,29 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+// @title Consumer role
+
+/// @dev represents the end recipient in the network.  While the actor is a
+/// human, the contract $!{contractName} a placeholder for recorded feedback or
+/// delivery preferences.
+contract Consumer is ComponentRole {
+    uint public feedbackScore;
+
+    function submitFeedback(uint _score) public {
+        feedbackScore = _score;
+    }
+
+    function getFeedback() public view returns (uint) {
+        return feedbackScore;
+    }
+
+    function playContractForIdentity() public pure returns (string memory) {
+        return "consumer";
+    }
+}

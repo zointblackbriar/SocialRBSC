@@ -1,0 +1,46 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/// @dev role contract $!{contractName} the drone. Contains identical
+/// behaviour to the Drone compartment; the role is used when the agent
+/// is acting in the drone capacity.
+contract DroneRole is SocialAgent, Society {
+    MedicinePlan public plan;
+    Player public player;
+
+    // events describing drone actions
+    event Departure();
+    event ArrivedAtPatient();
+
+
+    constructor(address _planAddress, address _owner) {
+        plan = MedicinePlan(_planAddress);
+        player = new Player(_owner);
+        // optional: compartment id may not be strictly needed
+    }
+
+    function deliverMedicine() external {
+        (bool delivered, , ) = plan.currentPlan();
+        require(!delivered, "Medicine already delivered");
+
+        // event Departure would be emitted here
+        // event ArrivedAtPatient would be emitted here
+        plan.markDelivered();
+    }
+
+    function checkReached() external view returns (bool) {
+        (bool delivered, , ) = plan.currentPlan();
+        return delivered;
+    }
+
+    function playRoleContract(address _contract, string calldata _fn) external returns(bool) {
+        return player.playDelegateCallRoleContract(_contract, _fn);
+    }
+
+} 

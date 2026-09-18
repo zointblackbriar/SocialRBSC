@@ -1,0 +1,10 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.13;
+
+import "../staticroleassignment/Compartment.sol";
+
+contract NewsSentimentCompartment is Compartment {
+    constructor() {
+        createCompartmentID("NewsSentimentCompartment");
+    }
+}

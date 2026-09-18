@@ -1,0 +1,53 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+contract $!{contractName} {
+
+    MealPlan public plan;
+
+    event PlacedIngredientsInSalad();
+    event GotIngredients();
+
+    // Constructor take the address of the Plan contract
+    constructor(address _planAddress) {
+        plan = MealPlan(_planAddress);
+    }
+
+    function getIngredientsForSalad() external {
+        (, , , , , , , , bool ingredientsInStock, ) = plan.currentPlan();
+
+        // Avoidance condition: If ingredients are missing or expired, avoid making the salad
+        require(ingredientsInStock, "Some ingredients are missing or expired");
+
+        emit GotIngredients();
+    }
+
+    // Action: Assemble salad (Sub-goal for salad)
+    function assembleSalad() external {
+        ( , , , , MealPlan.Willingness willingness, , , , , ) = plan.currentPlan();
+
+        // Willingness condition: Ensure the agent prefers a healthy meal
+        require(willingness == MealPlan.Willingness.High, "The agent is not willing to make a healthy meal right now.");
+
+        emit PlacedIngredientsInSalad();
+        // record that salad has been assembled on the plan
+        plan.markSaladAssembled();
+    }
+
+    // Action: Serve salad (Sub-goal for salad)
+    function serveSalad() external {
+        ( , , bool isServed, , MealPlan.Willingness willingness, , , , , ) = plan.currentPlan();
+
+        // Willingness condition: If high willingness, prioritize serving the salad.
+        require(willingness == MealPlan.Willingness.High, "The agent preferes a heavier meal.");
+        require(isServed, "Salad is already served.");
+
+        plan.markSaladServed();
+    }
+}
+

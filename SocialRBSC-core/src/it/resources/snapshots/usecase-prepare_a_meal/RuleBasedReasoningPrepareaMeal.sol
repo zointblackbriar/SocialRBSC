@@ -1,0 +1,42 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.13;
+
+import "./MealPlan.sol";
+import "./MealPreparation.sol";
+
+contract RuleBasedReasoningPrepareaMeal {
+
+    MealPlan public plan;
+    MealPreparation public mealPreparation;
+
+    struct AgentState {
+        MealPlan.EnergyUsage energyUsage;
+        MealPlan.Willingness willingness;
+        MealPlan.Diet diet;
+        MealPlan.IngredientsAvailability ingredientsAvailability;
+    }
+
+    AgentState public agentState;
+
+    constructor(address _planAddress, address _mealPreparationAddress) {
+        plan = MealPlan(_planAddress);
+        mealPreparation = MealPreparation(_mealPreparationAddress);
+        agentState.energyUsage = MealPlan.EnergyUsage.OffPeak;
+        agentState.willingness = MealPlan.Willingness.High;
+        agentState.diet = MealPlan.Diet.Regular;
+        agentState.ingredientsAvailability = MealPlan.IngredientsAvailability.Available;
+    }
+
+    function decideMeal() external returns (string memory) {
+        // Simple decision skeleton — implement domain-specific rules
+        // Optionally read specific fields from the plan only when needed:
+        // ( , , , MealPlan.EnergyUsage energyUsage, MealPlan.Willingness willingness, , , , , ) = plan.currentPlan();
+
+        if (agentState.willingness == MealPlan.Willingness.High && agentState.energyUsage == MealPlan.EnergyUsage.OffPeak) {
+            // default behavior: try first plan
+            return "High willingness / OffPeak";
+        }
+        return "No decision";
+    }
+
+}

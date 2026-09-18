@@ -1,0 +1,38 @@
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.8.7;
+
+import "./Mediator.sol";
+
+## @dev Concrete implementation of the Mediator pattern for managing social agents
+contract ConcreteMediator is Mediator {
+    ## mapping for assigned agents to society
+    #set($assignedAgentsToSociety = "assignedAgentsToSociety")
+    ## public boolean for mediator check
+    #set($isMediator = "isMediator")
+
+    mapping(string => address) public ${assignedAgentsToSociety};
+
+    ## Bind an agent to the society
+    function bindAgent(address _societyAddress, string memory _socialAgentName) override public {
+        if (_societyAddress != address(0)) {
+            ${assignedAgentsToSociety}[_socialAgentName] = _societyAddress;
+        } else {
+            revert("a social agent should have an address");
+        }
+    }
+$assignedAgentsToSociety.remove($socialAgentName);
+}
+
+## Get the address of an agent from the society
+function getAgentFromSociety(string memory _agentName) override public view returns(address) {
+## Retrieve the address of the agent from the mapping
+#set($agentAddress = $assignedAgentsToSociety.get($agentName))
+
+## Ensure the agent exists
+#if( $agentAddress != "0x0" )
+return $agentAddress;
+#else
+throw("Agent not found in the society");
+#end
+}
+}

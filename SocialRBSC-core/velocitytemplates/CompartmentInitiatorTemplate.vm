@@ -1,0 +1,23 @@
+#set($license = "MIT")
+#set($solidityVersion = "0.8.7")
+#set($compartmentContract = "Compartment")
+#set($compartmentInitiator = "CompartmentInitiator")
+#set($componentRoleContract = "ComponentRole")
+
+// SPDX-License-Identifier: ${license}
+pragma solidity >=${solidityVersion};
+
+import "../staticroleassignment/${compartmentContract}.sol";
+import "../staticroleassignment/ComponentCore.sol";
+import "../staticroleassignment/${componentRoleContract}.sol";
+
+## @dev Abstract smart contracts cannot be initiated directly. This initiator enables instantiation
+contract ${compartmentInitiator} is ${compartmentContract} {
+
+    ComponentCore componentCore;
+    constructor(ComponentCore _componentCoreAddress) {
+        componentCore = ComponentCore(_componentCoreAddress);
+    }
+
+
+}

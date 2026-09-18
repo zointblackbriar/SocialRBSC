@@ -1,0 +1,157 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.13;
+
+import "./MealPlan.sol";
+import "./MealPreparation.sol";
+import "./SaladMaking.sol";
+import "../goalplantree/GoalPlanTree.sol";
+
+// bring in BDI engine components so the meal‑preparation reasoning can leverage them
+import "../socialagentengine/SocialAgentStateMachine.sol";
+import "../socialagentengine/SocialAgentIntention.sol";
+import "../socialagentengine/SocialAgentDesire.sol";
+import "../socialagentengine/SocialAgentDeliberationCycle.sol";
+
+contract RuleBasedReasoningMealPreparation {
+
+    /// @dev Events to emit changes
+    event EnergyUsageChanged(MealPlan.EnergyUsage newUsage);
+    event WillingnessChanged(MealPlan.Willingness newLevel);
+    event IngredientsAvailabilityChanged(MealPlan.IngredientsAvailability newingredientsAvailability);
+    event DietChanged(MealPlan.Diet newDiet);
+
+
+    MealPlan public plan;
+    MealPreparation public mealPreparation;
+    SaladMaking public saladMaking;
+    GoalPlanTree public goalTree;
+
+    // references to the BDI engine components
+    SocialAgentStateMachine public socialAgentStateMachine;
+    SocialAgentIntention public socialAgentIntention;
+    SocialAgentDesire public socialAgentDesire;
+    SocialAgentDeliberationCycle public deliberationCycle;
+
+    /// @dev Agent's belief shows the state of the environment
+    AgentState public agentState;
+
+    struct AgentState {
+        MealPlan.EnergyUsage energyUsage;
+        MealPlan.Willingness willingness;
+        MealPlan.Diet diet;
+        MealPlan.IngredientsAvailability ingredientsAvailability;
+    }
+
+    event DecisionMade(string meal);
+
+    // --- BDI helpers --------------------------------------------------------
+    /// @dev configure the external BDI contracts so the reasoning component can
+    /// reference them if needed (tests may also call them directly)
+    // accept a plain address for easier compatibility with external callers;
+    // cast to payable when instantiating state machine contract.
+    function setBDIContracts(address _stateMachine, address _intention, address _desire, address _deliberation) external {
+        socialAgentStateMachine = SocialAgentStateMachine(payable(_stateMachine));
+        socialAgentIntention = SocialAgentIntention(_intention);
+        socialAgentDesire = SocialAgentDesire(_desire);
+        deliberationCycle = SocialAgentDeliberationCycle(_deliberation);
+    }
+
+    /// @dev simple view proxy so tests can assert that desire contract is wired up
+    function getCurrentDesire() external view returns (string memory) {
+        return socialAgentDesire.getDesire();
+    }
+
+
+    // Constructor takes the address of the Plan contract
+    constructor(address _planAddress, address _mealPreparationAddress, address _saladMakingAddress) {
+        plan = MealPlan(_planAddress);
+        mealPreparation = MealPreparation(_mealPreparationAddress);
+        saladMaking = SaladMaking(_saladMakingAddress);
+        // Initialize default values (beliefs) for the agent's state
+        agentState.energyUsage = MealPlan.EnergyUsage.OffPeak;
+        agentState.willingness = MealPlan.Willingness.High;
+        agentState.diet = MealPlan.Diet.Regular;
+        agentState.ingredientsAvailability = MealPlan.IngredientsAvailability.Available;
+
+        // construct a simple goal‑plan tree for the meal preparation scenario
+        goalTree = new GoalPlanTree();
+        goalTree.add("PrepareMeal", "", "decide which meal to make", 0, 0);
+        goalTree.addPlan("MakePasta", "PrepareMeal", "boil water and cook pasta", 0, 0);
+        goalTree.addPlan("MakeSandwich", "PrepareMeal", "assemble sandwich", 0, 0);
+        goalTree.addPlan("AssembleSalad", "PrepareMeal", "assemble salad", 0, 0);
+    }
+
+    // Rule-based reasoning function to decide which meal to prepare
+    // Decision-making function
+    function decideMeal() external returns (string memory) {
+        // Optionally, read plan fields only when needed, e.g.:
+        // ( , , , MealPlan.EnergyUsage energyUsage, MealPlan.Willingness willingness, , , , , ) = plan.currentPlan();
+
+        // ensure the root goal still exists (basic tree sanity check)
+        bytes32 rootPath = keccak256(abi.encode("", "PrepareMeal"));
+        (string memory nameRoot, , , , , ) = goalTree.getNode(rootPath);
+        require(bytes(nameRoot).length > 0, "Goal tree not initialized");
+
+        // Rule 1: If the agent has the willingness and is off-peak energy, prepare pasta
+        if (agentState.willingness == MealPlan.Willingness.High && agentState.energyUsage == MealPlan.EnergyUsage.OffPeak) {
+            mealPreparation.boilWater();
+            mealPreparation.cookPasta();
+            goalTree.executePlan("MakePasta");
+            // DecisionMade event would be emitted here
+            return "Pasta";
+        }
+
+        // Rule 2: If the agent is on a low-carb diet, avoid sandwiches
+        else if (agentState.diet == MealPlan.Diet.LowCarb) {
+            // Skip making a sandwich
+            // DecisionMade event would be emitted here
+            return "No Sandwich due to Low-Carb Diet";
+        }
+
+        // Rule 3: If ingredients are available and willingness is high, prepare a salad.
+        else if (agentState.ingredientsAvailability == MealPlan.IngredientsAvailability.Available
+            && agentState.willingness == MealPlan.Willingness.High) {
+            saladMaking.assembleSalad();
+            // update plan state to reflect salad assembly
+            plan.markSaladAssembled();
+            goalTree.executePlan("AssembleSalad");
+            // DecisionMade event would be emitted here
+            return "Salad Assembled";
+        }
+
+        // Rule 4: If no ingredients are available or willingness is low, make nothing
+        else {
+            emit DecisionMade("Nothing to prepare");
+            // clear the goal tree when everything is done or no action is taken
+            goalTree.dropGoalRecursively("", "PrepareMeal");
+            return "Nothing to prepare";
+        }
+    }
+
+    // Belief statements and the dynamic environment conditions changed
+    function setIngredientsAvailability(MealPlan.IngredientsAvailability _available) external {
+        agentState.ingredientsAvailability = _available;
+        emit IngredientsAvailabilityChanged(_available);
+    }
+
+    function setDiet(MealPlan.Diet _dietType) external {
+        agentState.diet = _dietType;
+        emit DietChanged(_dietType);
+    }
+
+    function setEnergyUsage(MealPlan.EnergyUsage _usage) external {
+        agentState.energyUsage = _usage;
+        emit EnergyUsageChanged(_usage);
+
+    }
+
+    function setWillingness(MealPlan.Willingness _level) external {
+        agentState.willingness = _level;
+        emit WillingnessChanged(_level);
+
+    }
+
+}
+
+
+

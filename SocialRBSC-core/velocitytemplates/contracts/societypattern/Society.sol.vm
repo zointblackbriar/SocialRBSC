@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+contract $!{contractName} {
+    string public societyName;
+    uint public societyID;
+
+
+    function setSocietyName(string memory _societyName) external {
+        societyName = _societyName;
+    }
+
+    function getSocietyName() external view returns(string memory){
+        return societyName;
+    }
+
+
+    function setSocietyID(uint _societyID) external {
+        societyID = _societyID;
+    }
+
+
+}
+

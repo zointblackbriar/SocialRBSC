@@ -1,0 +1,44 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/**
+ * @title Pharmacy
+ * @dev Consumer-side compartment where a pharmacy verifies delivery contents.
+ */
+contract $!{contractName} is Compartment {
+    MedicinePlan public plan;
+    Player public player;
+
+    event ReceivedForVerification();
+    event MedicineCorrect();
+
+    constructor(address _planAddress, address _owner) {
+        plan = MedicinePlan(_planAddress);
+        player = new Player(_owner);
+        createCompartmentID("Pharmacy");
+    }
+
+    function verifyMedicine() external {
+        (bool delivered, bool verified, ) = plan.currentPlan();
+        require(delivered, "Medicine has not been delivered yet");
+        require(!verified, "Medicine already verified");
+
+        emit ReceivedForVerification();
+        emit MedicineCorrect();
+        plan.markVerified();
+    }
+
+    function playRoleContract(address _contract, string calldata _fn) external returns(bool) {
+        return player.playDelegateCallRoleContract(_contract, _fn);
+    }
+
+    function getMyCompartmentID() external view returns(bytes32) {
+        return getCompartmentID();
+    }
+}

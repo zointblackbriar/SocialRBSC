@@ -1,0 +1,18 @@
+#set($license = "AGPL-3.0")
+#set($solidityVersion = "0.8.7")
+#set($componentRoleContract = "ComponentRole")
+#set($roleCreatorInterface = "RoleCreator")
+#set($componentRoleImportPath = "../staticroleassignment/ComponentRole.sol")
+
+// SPDX-License-Identifier: ${license}
+pragma solidity >=${solidityVersion};
+
+import "${componentRoleImportPath}";
+
+## @dev Interface for creating role instances
+interface ${roleCreatorInterface} {
+/**
+* @dev Creates a concrete instance of a `$componentRoleContract` from a `spec`.
+*/
+function createFor(bytes32 _spec) external returns (${componentRoleContract});
+}

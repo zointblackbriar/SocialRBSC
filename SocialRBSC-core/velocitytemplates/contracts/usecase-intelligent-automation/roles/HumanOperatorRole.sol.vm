@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/**
+ * @title HumanOperatorRole
+ * @dev Role contract $!{contractName} the SRE/DevOps human who supervises the AIOps agent.
+ */
+contract HumanOperatorRole is ComponentRole {
+    // no additional logic; serves as a marker role
+}

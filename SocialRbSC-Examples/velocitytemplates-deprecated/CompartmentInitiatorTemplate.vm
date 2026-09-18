@@ -1,0 +1,24 @@
+#set($license = "SPDX-License-Identifier: MIT")
+#set($solidityVersion = "0.8.7")
+###set($compartmentContract = "Compartment")
+###set($compartmentInitiator = "CompartmentInitiator")
+import "../staticroleassignment/Compartment.sol";
+import "../staticroleassignment/ComponentCore.sol";
+
+pragma solidity >=${solidityVersion};
+
+import "../staticroleassignment/${compartmentContract}.sol";
+import "../staticroleassignment/${componentRoleContract}.sol";
+
+// @dev $compartmentContract is an abstract smart contract
+// @dev Abstract smart contracts cannot be initiated as a regular smart contract. We need a ${compartmentContract}Initiator
+contract ${compartmentInitiator} is ${compartmentContract} {
+    // One can call the most necessarry method with componentCore such as role adding, removing, compartment activation and deeactivation
+
+    ComponentCore componentCore;
+    constructor(ComponentCore _componentCoreAddress) {
+        componentCore = ComponentCore(_componentCoreAddress);
+    }
+
+
+}

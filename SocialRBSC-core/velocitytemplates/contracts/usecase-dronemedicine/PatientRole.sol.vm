@@ -1,0 +1,41 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/// @dev role contract $!{contractName} the patient. Contains the methods to confirm
+/// receipt that were in the Patient compartment.
+contract PatientRole is SocialAgent, Society {
+    MedicinePlan public plan;
+    Player public player;
+    address public pharmacyAddress;
+
+    event PatientReceived();
+    event BenefitAcknowledged();
+
+
+    constructor(address _planAddress, address _pharmacyAddress, address _owner) {
+        plan = MedicinePlan(_planAddress);
+        pharmacyAddress = _pharmacyAddress;
+        player = new Player(_owner);
+    }
+
+    function confirmReceipt() external {
+        (, bool verified, bool notified) = plan.currentPlan();
+        require(verified, "Medicine must be verified by pharmacy first");
+        require(!notified, "Patient has already confirmed");
+
+        emit PatientReceived();
+        emit BenefitAcknowledged();
+        plan.markPatientNotified();
+    }
+
+    function playRoleContract(address _contract, string calldata _fn) external returns(bool) {
+        return player.playDelegateCallRoleContract(_contract, _fn);
+    }
+
+} 

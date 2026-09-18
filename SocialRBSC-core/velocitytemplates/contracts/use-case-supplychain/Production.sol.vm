@@ -1,0 +1,86 @@
+//SPDX-License-Identifier: AGPL-3.0
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+// new actor imports
+
+
+// @title Supply Chain Network implementation
+
+contract $!{contractName} is Compartment {
+    Retailer retailerRole;
+    Wholesaler wholesalerRole;
+
+    // roles for extended actor model
+    Coordinator coordinatorRole;
+    DroneAgent droneRole;
+    GroundRobot groundRobotRole;
+    Consumer consumerRole;
+
+    Utils utils;
+
+    bytes32 public retailerSpec = "RETAILER";
+    bytes32 public wholesalerSpec = "WHOLESALER";
+
+    // added for extended actor model
+    bytes32 public coordinatorSpec = "COORDINATOR";
+    bytes32 public droneSpec = "DRONE_AGENT";
+    bytes32 public groundRobotSpec = "GROUND_ROBOT";
+    bytes32 public consumerSpec = "CONSUMER";
+
+    function getRetailerRole() public returns (Retailer) {
+        if(address(retailerRole) != address(0)) return retailerRole;
+        //else
+        this.addRoleCreator(retailerSpec , new RetailerCreator());
+        retailerRole = Retailer(this.addRole((retailerSpec)));
+        return retailerRole;
+    }
+
+    function getWholesalerRole() public returns (Wholesaler) {
+        if(address(wholesalerRole) != address(0)) return wholesalerRole;
+        //else
+        this.addRoleCreator(wholesalerSpec, new WholesalerCreator());
+        wholesalerRole = Wholesaler(this.addRole(wholesalerSpec));
+
+        return wholesalerRole;
+    }
+
+    // coordinator component
+    function getCoordinatorRole() public returns (Coordinator) {
+        if(address(coordinatorRole) != address(0)) return coordinatorRole;
+        this.addRoleCreator(coordinatorSpec, new CoordinatorCreator());
+        coordinatorRole = Coordinator(this.addRole(coordinatorSpec));
+        return coordinatorRole;
+    }
+
+    // drone agent component
+    function getDroneAgentRole() public returns (DroneAgent) {
+        if(address(droneRole) != address(0)) return droneRole;
+        this.addRoleCreator(droneSpec, new DroneAgentCreator());
+        droneRole = DroneAgent(this.addRole(droneSpec));
+        return droneRole;
+    }
+
+    // ground robot component
+    function getGroundRobotRole() public returns (GroundRobot) {
+        if(address(groundRobotRole) != address(0)) return groundRobotRole;
+        this.addRoleCreator(groundRobotSpec, new GroundRobotCreator());
+        groundRobotRole = GroundRobot(this.addRole(groundRobotSpec));
+        return groundRobotRole;
+    }
+
+    // consumer component
+    function getConsumerRole() public returns (Consumer) {
+        if(address(consumerRole) != address(0)) return consumerRole;
+        this.addRoleCreator(consumerSpec, new ConsumerCreator());
+        consumerRole = Consumer(this.addRole(consumerSpec));
+        return consumerRole;
+    }
+
+}
+

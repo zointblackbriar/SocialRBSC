@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/// @title Sector Analysis Agent Compartment
+contract $!{contractName} is SocialAgent {
+    constructor(string memory _name) {
+        setName(_name);
+    }
+
+    /// @notice receive sentiment input
+    function receiveSentiment(bytes32 symbol, int8 score) external {
+        emit SentimentReceived(symbol, score);
+    }
+
+    /// @notice generate recommendation stub
+    function makeRecommendation(bytes32 symbol) external returns (string memory) {
+        string memory rec = "HOLD";
+        emit Recommendation(symbol, rec);
+        return rec;
+    }
+
+    event SentimentReceived(bytes32 symbol, int8 score);
+    event Recommendation(bytes32 symbol, string rec);
+}

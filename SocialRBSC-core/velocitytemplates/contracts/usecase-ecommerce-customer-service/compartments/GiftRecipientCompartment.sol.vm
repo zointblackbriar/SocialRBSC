@@ -1,0 +1,18 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/**
+ * @title GiftRecipientCompartment
+ * @dev Compartment representing the gift recipient (secondary human actor).
+ */
+contract $!{contractName} is Compartment {
+    constructor() {
+        createCompartmentID("GiftRecipient");
+    }
+}

@@ -1,0 +1,23 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+// The customer agent who triggers the serving action
+contract $!{contractName} is SocialAgent {
+    MealPreparation public mealPreparation;
+
+    constructor(address _mealPreparationAddress, string memory _name) {
+        mealPreparation = MealPreparation(_mealPreparationAddress);
+        setName(_name);
+    }
+
+
+    function serveMeal() external {
+        mealPreparation.servePasta();
+    }
+}

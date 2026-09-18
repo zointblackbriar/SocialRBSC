@@ -1,0 +1,14 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+contract $!{contractName} is Compartment {
+    constructor() {
+        createCompartmentID("NewsSentimentCompartment");
+    }
+}

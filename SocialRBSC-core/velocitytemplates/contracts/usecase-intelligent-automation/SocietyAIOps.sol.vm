@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/**
+ * @title SocietyAIOps
+ * @dev Represents the overall society encompassing all compartments/actors
+ * in the automated IT operations use case.
+ */
+contract $!{contractName} is Society {
+    constructor() Society() {
+        // nothing special
+    }
+}

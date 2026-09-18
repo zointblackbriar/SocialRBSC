@@ -1,0 +1,21 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+contract $!{contractName} is ComponentRole {
+    string public message;
+    function roleFunction() public {
+        message = "roleFunction test value";
+    }
+}
+
+contract SampleRole1Updated is ComponentRole { }
+
+contract SampleRole2 is ComponentRole { }
+
+contract RoleInitiator {}

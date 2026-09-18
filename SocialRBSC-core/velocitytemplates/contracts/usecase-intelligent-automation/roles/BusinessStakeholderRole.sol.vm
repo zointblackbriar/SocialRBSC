@@ -1,0 +1,15 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/**
+ * @title BusinessStakeholderRole
+ * @dev Marker role for the business stakeholder / product owner.
+ */
+contract $!{contractName} is ComponentRole {
+}

@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+interface RoleCreator {
+    /**
+     * @dev Creates a concrete instance of a `ComponentRole` from a `spec`.
+     */
+    function createFor(bytes32 _roleAddress) external returns (ComponentRole);
+}
+

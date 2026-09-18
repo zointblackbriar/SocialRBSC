@@ -1,0 +1,29 @@
+#set($license = 'SPDX-License-Identifier: GPL-3.0')
+#set($solidityVersion = '0.7.0')
+###set($roleName = "sampleRole")  // Replace with your role name
+###set($stringVar = 'yourStringVar') // Replace with your string variable name
+###set($uintVar = 'yourUintVar')     // Replace with your uint variable name
+###set($roleFunction1 = 'yourFunction1') // Replace with your function name
+###set($roleFunction2 = 'yourFunction2') // Replace with your function name
+
+
+// $license
+pragma solidity >=${solidityVersion} <0.9.0;
+import "../../../SOLMASFramework/contracts/staticroleassignmentinitiator/RoleCreator.sol";
+import "../../../SOLMASFramework/contracts/staticroleassignment/ComponentRole.sol";
+
+
+contract $RoleName is ComponentRole {
+
+    string public $stringVar;
+
+    function $roleFunction() public {
+    // Your function logic here
+    }
+
+}
+contract $roleNameCreator is RoleCreator {
+    function createFor(bytes32 spec) external override returns(ComponentRole) {
+    return new $roleName();
+}
+}

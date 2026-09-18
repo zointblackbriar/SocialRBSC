@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/// @dev role contract $!{contractName} the pharmacy.  Mirrors the behaviour
+/// of the Pharmacy compartment but attaches to a ComponentRole.
+contract PharmacyRole is SocialAgent, Society {
+    MedicinePlan public plan;
+    Player public player;
+
+    event ReceivedForVerification();
+    event MedicineCorrect();
+
+
+    constructor(address _planAddress, address _owner) {
+        plan = MedicinePlan(_planAddress);
+        player = new Player(_owner);
+    }
+
+    function verifyMedicine() external {
+        (bool delivered, bool verified, ) = plan.currentPlan();
+        require(delivered, "Medicine has not been delivered yet");
+        require(!verified, "Medicine already verified");
+
+        emit ReceivedForVerification();
+        emit MedicineCorrect();
+        plan.markVerified();
+    }
+
+    function playRoleContract(address _contract, string calldata _fn) external returns(bool) {
+        return player.playDelegateCallRoleContract(_contract, _fn);
+    }
+
+} 

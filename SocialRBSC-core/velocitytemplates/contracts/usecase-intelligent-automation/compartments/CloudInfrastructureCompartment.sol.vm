@@ -1,0 +1,20 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/**
+ * @title CloudInfrastructureCompartment
+ * @dev Represents the target infrastructure being monitored by the agent.
+ * In the smart contract $!{contractName} it acts as a passive compartment that can be
+ * referenced but does not itself execute business logic.
+ */
+contract CloudInfrastructureCompartment is Compartment {
+    constructor() {
+        createCompartmentID("CloudInfrastructure");
+    }
+}

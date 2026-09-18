@@ -1,0 +1,23 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.13;
+
+// Goal: $displayName
+contract ${contractId} {
+
+#foreach($plan in $plans)
+    // Plan: $plan.name
+    // Avoidance: $plan.avoidance
+    // Willingness: $plan.willingness
+
+    #foreach($sub in $plan.subGoals)
+        // SubGoal: $sub.name
+            #foreach($action in $sub.actions)
+    // Action: $action.name
+    function $action.get("methodName")() public {
+        // Avoidance: $action.get("avoidance")
+        // Willingness: $action.get("willingness")
+    }
+            #end
+    #end
+#end
+}

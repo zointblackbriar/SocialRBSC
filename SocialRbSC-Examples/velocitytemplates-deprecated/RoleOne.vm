@@ -1,0 +1,40 @@
+## SPDX-License-Identifier: AGPL-3.0
+## Velocity template for a generic role contract
+
+###set( $genericRole = "GenericRole" )
+###set( $pushFunctionName = "pushFunction" )
+###set( $popFunctionName = "popFunction" )
+###set( $getInventoryStatusFunctionName = "getInventoryStatus" )
+###set( $playContractFunctionName = "playContract" )
+###set( $inventoryVariable = "itemsInInventory" )
+
+pragma solidity >=0.8.7;
+
+import "../staticroleassignment/ComponentRole.sol";
+
+// @title Supply Chain Network implementation
+
+/// @dev a new role has been created
+contract ${genericRole} is ComponentRole {
+uint public ${inventoryVariable};
+
+function ${pushFunctionName}(uint _item) public {
+${inventoryVariable} += _item;
+}
+
+function ${popFunctionName}(uint _item) public {
+require(
+_item < ${inventoryVariable},
+"we need to check boundary for items in inventory"
+);
+${inventoryVariable} -= _item;
+}
+
+function ${getInventoryStatusFunctionName}() public view returns (uint) {
+return ${inventoryVariable};
+}
+
+function ${playContractFunctionName}() public pure returns (string memory) {
+return "it has been played";
+}
+}

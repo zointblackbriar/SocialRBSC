@@ -1,0 +1,91 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.13;
+
+contract MealPlan {
+
+    enum EnergyUsage {
+        Peak,
+        OffPeak
+    }
+
+    enum Willingness {
+        High,
+        Low
+    }
+
+    enum Diet {
+        Regular,
+        LowCarb
+    }
+
+    enum IngredientsAvailability {
+        Available,
+        Missing
+    }
+
+    // Events related to plan: Make pasta
+                event Turn_on_stove();
+            
+    // Events to emit changes
+    event EnergyUsageChanged(EnergyUsage newUsage);
+    event WillingnessChanged(Willingness newLevel);
+    event DietChanged(Diet newDiet);
+    event PlanReset();
+    event IngredientsAvailabilityChanged(bool available);
+
+    struct PlanStatus {
+        bool isBoiled;
+        bool isCooked;
+        bool isServed;
+        EnergyUsage energyUsage;
+        Willingness willingness;
+        bool sandwichAssembled;
+        Diet diet;
+        bool isSandwichServed;
+        bool ingredientsInStock;
+        bool saladAssembled;
+    }
+
+    PlanStatus public currentPlan;
+
+    constructor() {
+        currentPlan.isBoiled = false;
+        currentPlan.isCooked = false;
+        currentPlan.isServed = false;
+        currentPlan.energyUsage = EnergyUsage.OffPeak;
+        currentPlan.willingness = Willingness.High;
+        currentPlan.sandwichAssembled = false;
+        currentPlan.diet = Diet.Regular;
+        currentPlan.isSandwichServed = false;
+        currentPlan.ingredientsInStock = true;
+        currentPlan.saladAssembled = false;
+    }
+
+    function resetPlan() external {
+        currentPlan.isBoiled = false;
+        currentPlan.isCooked = false;
+        currentPlan.isServed = false;
+        emit PlanReset();
+    }
+
+    function setIngredientsAvailability(bool available) external {
+        currentPlan.ingredientsInStock = available;
+        emit IngredientsAvailabilityChanged(available);
+    }
+
+    function setDiet(Diet dietType) external {
+        currentPlan.diet = dietType;
+        emit DietChanged(dietType);
+    }
+
+    function setEnergyUsage(EnergyUsage _usage) external {
+        currentPlan.energyUsage = _usage;
+        emit EnergyUsageChanged(_usage);
+    }
+
+    function setWillingness(Willingness level) external {
+        currentPlan.willingness = level;
+        emit WillingnessChanged(level);
+    }
+
+}

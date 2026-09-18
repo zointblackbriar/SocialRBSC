@@ -1,0 +1,20 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+contract $!{contractName} {
+    constructor(){
+
+    }
+
+    bool public played = false;
+
+    function playContractForIdentity() public {
+        played = true;
+    }
+}
+

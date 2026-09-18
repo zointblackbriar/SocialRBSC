@@ -1,0 +1,55 @@
+// SPDX-License-Identifier: MIT
+## @dev Velocity template for a generic role contract
+
+## Set default values only if not provided in context
+#if(!$solidityVersion)
+  #set($solidityVersion = "0.8.7")
+#end
+#if(!$genericRole)
+  #set($genericRole = "GenericRole")
+#end
+#if(!$pushFunctionName)
+  #set($pushFunctionName = "pushFunction")
+#end
+#if(!$popFunctionName)
+  #set($popFunctionName = "popFunction")
+#end
+#if(!$getInventoryStatusFunctionName)
+  #set($getInventoryStatusFunctionName = "getInventoryStatus")
+#end
+#if(!$playContractFunctionName)
+  #set($playContractFunctionName = "playContract")
+#end
+#if(!$inventoryVariable)
+  #set($inventoryVariable = "itemsInInventory")
+#end
+
+pragma solidity >=${solidityVersion};
+
+import "../staticroleassignment/ComponentRole.sol";
+
+## @title Supply Chain Network implementation
+## @dev A new role has been created
+contract ${genericRole} is ComponentRole {
+uint public ${inventoryVariable};
+
+function ${pushFunctionName}(uint _item) public {
+${inventoryVariable} += _item;
+}
+
+function ${popFunctionName}(uint _item) public {
+require(
+_item < ${inventoryVariable},
+"we need to check boundary for items in inventory"
+);
+${inventoryVariable} -= _item;
+}
+
+function ${getInventoryStatusFunctionName}() public view returns (uint) {
+return ${inventoryVariable};
+}
+
+function ${playContractFunctionName}() public pure returns (string memory) {
+return "it has been played";
+}
+}

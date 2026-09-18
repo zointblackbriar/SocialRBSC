@@ -1,0 +1,46 @@
+## SPDX-License-Identifier: AGPL-3.0
+## Velocity template for a generic Supply Chain Network contract
+
+#set( $genericEntity = "GenericEntity" )
+#set( $roleOne = "RoleOne" )
+#set( $roleTwo = "RoleTwo" )
+#set( $roleOneCreator = "RoleOneCreator" )
+#set( $roleTwoCreator = "RoleTwoCreator" )
+#set( $roleOneSpec = $input.roleOneSpec )
+#set( $roleTwoSpec = $input.roleTwoSpec )
+
+pragma solidity >=0.8.7;
+
+import "../staticroleassignment/Compartment.sol";
+import "./${roleOne}.sol";
+import "./${roleTwo}.sol";
+import "./${roleOneCreator}.sol";
+import "./${roleTwoCreator}.sol";
+import "../socialagentengine/Utils.sol";
+
+// @title Generic Supply Chain Network implementation
+
+contract ${genericEntity} is Compartment {
+${roleOne} roleOneInstance;
+${roleTwo} roleTwoInstance;
+Utils utils;
+
+bytes32 public roleOneSpec = "${roleOneSpec}";
+bytes32 public roleTwoSpec = "${roleTwoSpec}";
+
+function getRoleOne() public returns (${roleOne}) {
+if(address(roleOneInstance) != address(0)) return roleOneInstance;
+//else
+this.addRoleCreator(roleOneSpec , new ${roleOneCreator}());
+roleOneInstance = ${roleOne}(this.addRole(roleOneSpec));
+return roleOneInstance;
+}
+
+function getRoleTwo() public returns (${roleTwo}) {
+if(address(roleTwoInstance) != address(0)) return roleTwoInstance;
+//else
+this.addRoleCreator(roleTwoSpec, new ${roleTwoCreator}());
+roleTwoInstance = ${roleTwo}(this.addRole(roleTwoSpec));
+return roleTwoInstance;
+}
+}

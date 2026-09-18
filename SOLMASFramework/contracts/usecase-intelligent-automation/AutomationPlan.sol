@@ -1,0 +1,78 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.13;
+
+/**
+ * @title AutomationPlan
+ * @dev Simple plan contract for the intelligent automation use case.  The
+ * plan tracks whether each of the five subgoals has been completed.  Events
+ * are emitted when steps are reached and the plan can be reset.
+ */
+contract AutomationPlan {
+    event BaselineEstablished();
+    event AnomalyDetected();
+    event RootCauseDiagnosed();
+    event RemediationExecuted();
+    event KnowledgeUpdated();
+    event PlanReset();
+
+    struct PlanStatus {
+        bool baselineEstablished;
+        bool anomalyDetected;
+        bool rootCauseDiagnosed;
+        bool remediationExecuted;
+        bool knowledgeUpdated;
+    }
+
+    PlanStatus public currentPlan;
+
+    constructor() {
+        currentPlan.baselineEstablished = false;
+        currentPlan.anomalyDetected = false;
+        currentPlan.rootCauseDiagnosed = false;
+        currentPlan.remediationExecuted = false;
+        currentPlan.knowledgeUpdated = false;
+    }
+
+    function resetPlan() external {
+        currentPlan.baselineEstablished = false;
+        currentPlan.anomalyDetected = false;
+        currentPlan.rootCauseDiagnosed = false;
+        currentPlan.remediationExecuted = false;
+        currentPlan.knowledgeUpdated = false;
+        // event PlanReset would be emitted here
+    }
+
+    function markBaseline() external {
+        require(!currentPlan.baselineEstablished, "Baseline already set");
+        currentPlan.baselineEstablished = true;
+        // event BaselineEstablished would be emitted here
+    }
+
+    function markAnomaly() external {
+        require(currentPlan.baselineEstablished, "Baseline must be established first");
+        require(!currentPlan.anomalyDetected, "Anomaly already detected");
+        currentPlan.anomalyDetected = true;
+        // event AnomalyDetected would be emitted here
+    }
+
+    function markDiagnosis() external {
+        require(currentPlan.anomalyDetected, "Anomaly must be detected first");
+        require(!currentPlan.rootCauseDiagnosed, "Already diagnosed");
+        currentPlan.rootCauseDiagnosed = true;
+        // event RootCauseDiagnosed would be emitted here
+    }
+
+    function markRemediation() external {
+        require(currentPlan.rootCauseDiagnosed, "Diagnosis must happen first");
+        require(!currentPlan.remediationExecuted, "Remediation already executed");
+        currentPlan.remediationExecuted = true;
+        // event RemediationExecuted would be emitted here
+    }
+
+    function markLearning() external {
+        require(currentPlan.remediationExecuted, "Remediation must be executed first");
+        require(!currentPlan.knowledgeUpdated, "Knowledge already updated");
+        currentPlan.knowledgeUpdated = true;
+        // event KnowledgeUpdated would be emitted here
+    }
+}

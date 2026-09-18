@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/// @title Risk Management Agent Compartment
+contract $!{contractName} is SocialAgent {
+    constructor(string memory _name) {
+        setName(_name);
+    }
+
+    /// @notice update risk parameters
+    function updateRiskProfile(string memory profile) external {
+        emit RiskProfileUpdated(profile);
+    }
+
+    /// @notice check a proposed trade
+    function validateTrade(bytes32 symbol, uint256 size) external view returns (bool) {
+        // always ok for now
+        return true;
+    }
+
+    event RiskProfileUpdated(string profile);
+}

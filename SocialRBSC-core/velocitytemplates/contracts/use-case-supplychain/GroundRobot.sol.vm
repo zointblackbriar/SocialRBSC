@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+// @title Ground Robot Agent role
+
+/// @dev represents an autonomous ground vehicle.  Stub contract $!{contractName} the use
+/// case; further logic can be added for navigation state, traffic alerts, etc.
+contract GroundRobot is ComponentRole {
+    uint public tripsMade;
+
+    function recordTrip() public {
+        tripsMade += 1;
+    }
+
+    function getTrips() public view returns (uint) {
+        return tripsMade;
+    }
+
+    function playContractForIdentity() public pure returns (string memory) {
+        return "ground robot";
+    }
+}

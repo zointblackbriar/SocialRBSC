@@ -1,0 +1,4 @@
+de.tudresden.multiagentsystem.annotationprocessor.RoleProcessor
+de.tudresden.multiagentsystem.annotationprocessor.SocialAgentProcessor
+de.tudresden.multiagentsystem.annotationprocessor.GoalPlanProcessor
+de.tudresden.multiagentsystem.annotationprocessor.DeployProcessor

@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/**
+ * @title AIOpsAgentCompartment
+ * @dev Compartment representing the autonomous AIOps agent itself.  In a
+ * deployed system the agent would occupy this compartment and perform
+ * monitoring, diagnostics and remediation activities on the managed
+ * environment.
+ */
+contract $!{contractName} is Compartment {
+    constructor() {
+        // give the compartment an identifier for debugging / lookup
+        createCompartmentID("AIOpsAgent");
+    }
+}

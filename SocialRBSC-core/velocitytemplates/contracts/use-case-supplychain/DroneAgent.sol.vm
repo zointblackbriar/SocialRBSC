@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+// @title Drone Agent role
+
+/// @dev represents an aerial delivery unit.  The contract $!{contractName} intentionally
+/// minimal and may be extended with sensor data and status reports.
+contract DroneAgent is ComponentRole {
+    uint public deliveriesCompleted;
+
+    function recordDelivery() public {
+        deliveriesCompleted += 1;
+    }
+
+    function getDeliveries() public view returns (uint) {
+        return deliveriesCompleted;
+    }
+
+    function playContractForIdentity() public pure returns (string memory) {
+        return "drone agent";
+    }
+}

@@ -1,0 +1,83 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/// @title goal assignment for Social Intention to execute one by one using Intention Stack
+/// @author Orcun Oruc
+// @dev Intentions (Steps to achieve the desire)
+// This should be stack data structure - Intention Stack
+
+contract $!{contractName} {
+
+    // Stack of intentions for each agent
+    mapping(address => string[]) public agentIntentionsStack;
+    SocialAgentDesire socialAgentDesire;
+    Utils utils;
+
+    bool public success;
+    string public topIntention;
+
+    // @dev autowired _socialAgentDesiredAddress
+    constructor(address _socialAgentDesireAddress, address utilsAddress) {
+        success = false;
+
+        socialAgentDesire = SocialAgentDesire(_socialAgentDesireAddress);
+        utils = Utils(utilsAddress);
+
+    }
+
+    // @dev Pushes a new intention onto the agent's stack
+    function pushIntention(address _intentionAssignmentAddress, string memory _intention) public {
+        agentIntentionsStack[_intentionAssignmentAddress].push(_intention);
+    }
+
+    // Function to get the size of the intention stack for a given agent
+    function getIntentionStackSize(address _agentAddress) public view returns (uint256) {
+        return agentIntentionsStack[_agentAddress].length;
+    }
+
+
+    function getAgentIntentions(address _intentionAssignmentAddress) external view returns (string[] memory) {
+        return agentIntentionsStack[_intentionAssignmentAddress];
+    }
+
+    function getAgentIntentionAtIndex(address _intentionAssignmentAddress, uint256 _index) external view returns (string memory) {
+        require(_index < agentIntentionsStack[_intentionAssignmentAddress].length, "Intention index out of bounds");
+        return agentIntentionsStack[_intentionAssignmentAddress][_index];
+    }
+
+    function actIntention(string memory _currentDesire) public view returns (string memory) {
+        require(!utils.compare(_currentDesire, "None"), "current desire should not be None");
+        return "actIntention invoked";
+    }
+
+    // @dev Pops and executes the top intention from the stack if it matches a role in the provided list.
+    function executeIntention(string[] memory _socialAgentList, string memory _metamodelNameDesire, string memory _currentDesire, address addressOfIntention) public {
+        require(agentIntentionsStack[addressOfIntention].length > 0, "No intention set");
+        success = true;
+
+        // Get the top intention (last pushed)
+        //        topIntention = agentIntentionsStack[msg.sender][agentIntentionsStack[msg.sender].length - 1];
+        topIntention = agentIntentionsStack[addressOfIntention][agentIntentionsStack[addressOfIntention].length - 1];
+        // Check if the intention matches any social agent in the socialAgentList and execute if it does
+
+        for (uint i = 0; i < _socialAgentList.length; i++) {
+
+        if (keccak256(bytes(topIntention)) == keccak256(bytes(_socialAgentList[i]))) {
+        // Execute the logic corresponding to the matched social agent
+        socialAgentDesire.setDesire(_metamodelNameDesire, SocialAgentDesire.Desire.ExecuteIntention); // intention has been iterated
+                        actIntention(_currentDesire);
+        //                break;
+                }
+            }
+            // Pop the executed intention from the stack
+            agentIntentionsStack[addressOfIntention].pop();
+        }
+
+}
+

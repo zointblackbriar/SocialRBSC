@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+interface Mediator {
+    // we have three basic agent functions to bind, unbind, and get the agent information
+    function bindAgent(address _agentAddress, string memory _agentName) external;
+
+    function unbindAgent(string memory _agentName) external;
+
+    function getAgentFromSociety(string memory _agentName) external view returns(address);
+}
+

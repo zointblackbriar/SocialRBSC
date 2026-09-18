@@ -1,0 +1,18 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+// @title Supply Chain Network implementation
+
+contract $!{contractName} is RoleCreator {
+//    function createFor() external override returns (ComponentRole)
+    function createFor(bytes32 _spec) override public returns (ComponentRole) {
+        return new Wholesaler();
+    }
+}
+

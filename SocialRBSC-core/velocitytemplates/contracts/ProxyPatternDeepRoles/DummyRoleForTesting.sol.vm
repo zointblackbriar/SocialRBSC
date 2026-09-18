@@ -1,0 +1,15 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+contract $!{contractName} {
+
+    function dummyFunction() external pure returns(string memory) {
+        return "This is a dummy function";
+    }
+}
+

@@ -1,0 +1,489 @@
+package de.tudresden.codegenerator.autogen;
+
+import io.reactivex.Flowable;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import javax.annotation.processing.Generated;
+import org.web3j.abi.EventEncoder;
+import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Bool;
+import org.web3j.abi.datatypes.Event;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.Utf8String;
+import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.crypto.Credentials;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameter;
+import org.web3j.protocol.core.RemoteCall;
+import org.web3j.protocol.core.RemoteFunctionCall;
+import org.web3j.protocol.core.methods.request.EthFilter;
+import org.web3j.protocol.core.methods.response.BaseEventResponse;
+import org.web3j.protocol.core.methods.response.Log;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.tx.Contract;
+import org.web3j.tx.TransactionManager;
+import org.web3j.tx.gas.ContractGasProvider;
+
+/**
+ * <p>Auto generated code.
+ * <p><strong>Do not modify!</strong>
+ * <p>Please use the <a href="https://docs.web3j.io/command_line.html">web3j command line tools</a>,
+ * or the org.web3j.codegen.SolidityFunctionWrapperGenerator in the 
+ * <a href="https://github.com/LFDT-web3j/web3j/tree/main/codegen">codegen module</a> to update.
+ *
+ * <p>Generated with web3j version 5.0.2.
+ */
+@SuppressWarnings("rawtypes")
+@Generated("org.web3j.codegen.SolidityFunctionWrapperGenerator")
+public class PharmacyRole extends Contract {
+    public static final String BINARY = "60806040523480156200001157600080fd5b5060405162001810380380620018108339810160408190526200003491620000e1565b600580546001600160a01b0319166001600160a01b03841617905560405181906200005f90620000b6565b6001600160a01b039091168152602001604051809103906000f0801580156200008c573d6000803e3d6000fd5b50600680546001600160a01b0319166001600160a01b039290921691909117905550620001199050565b610478806200139883390190565b80516001600160a01b0381168114620000dc57600080fd5b919050565b60008060408385031215620000f557600080fd5b6200010083620000c4565b91506200011060208401620000c4565b90509250929050565b61126f80620001296000396000f3fe608060405234801561001057600080fd5b50600436106101c45760003560e01c806395ec5ce3116100f9578063d85fcbd511610097578063e80c8a6611610071578063e80c8a661461039a578063e959b38a146103a2578063ee302734146103b5578063f2f4eb26146103bd57600080fd5b8063d85fcbd514610361578063e405148414610374578063e51c19fd1461038757600080fd5b80639fd20abc116100d35780639fd20abc14610315578063b3cac0a514610328578063c47f00271461033b578063d0bf6d151461034e57600080fd5b806395ec5ce3146102f25780639794f5dd146102fa5780639ad179be1461030257600080fd5b8063496a3c48116101665780636e8eb7bc116101405780636e8eb7bc146102a257806380009630146102b55780638a8981b1146102c85780639079abd3146102df57600080fd5b8063496a3c481461027457806353e06571146102875780636b5a3e391461029a57600080fd5b8063201b631b116101a2578063201b631b1461021b5780633d5315b51461022e57806340a9efc81461023657806348db5f891461026157600080fd5b806301ffc9a7146101c957806310286443146101f157806319b96c3f14610206575b600080fd5b6101dc6101d7366004610df9565b6103d0565b60405190151581526020015b60405180910390f35b6102046101ff366004610ee2565b610407565b005b61020e610469565b6040516101e89190610f81565b6101dc610229366004610f94565b6104fb565b61020e61057b565b600154610249906001600160a01b031681565b6040516001600160a01b0390911681526020016101e8565b600654610249906001600160a01b031681565b610204610282366004611019565b61058a565b600554610249906001600160a01b031681565b6102496105ed565b6102496102b0366004611036565b61066a565b6102046102c3366004611019565b6106da565b6102d160045481565b6040519081526020016101e8565b6102046102ed36600461104f565b610780565b610204610797565b61020e6107f2565b6101dc610310366004610f94565b610880565b610204610323366004611019565b6108b5565b6101dc610336366004611036565b610959565b61020461034936600461104f565b6109c7565b61020461035c366004611036565b6109da565b61020461036f366004611036565b600455565b61020461038236600461104f565b610a0b565b610204610395366004611084565b610a17565b61020e610a7c565b6102046103b03660046110e6565b610a89565b610204610ac2565b600054610249906001600160a01b031681565b60006301ffc9a760e01b6001600160e01b03198316148061040157506001600160e01b03198216636f8ae2e560e11b145b92915050565b60405163c352945360e01b81526001600160a01b0382169063c352945390610433908590600401610f81565b600060405180830381600087803b15801561044d57600080fd5b505af1158015610461573d6000803e3d6000fd5b505050505050565b6060600280546104789061110b565b80601f01602080910402602001604051908101604052809291908181526020018280546104a49061110b565b80156104f15780601f106104c6576101008083540402835291602001916104f1565b820191906000526020600020905b8154815290600101906020018083116104d457829003601f168201915b5050505050905090565b6000805460405163201b631b60e01b81526001600160a01b039091169063201b631b9061053090879087908790600401611145565b6020604051808303816000875af115801561054f573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610573919061119a565b949350505050565b6060600380546104789061110b565b60005460405163092d478960e31b81526001600160a01b0383811660048301529091169063496a3c48906024015b600060405180830381600087803b1580156105d257600080fd5b505af11580156105e6573d6000803e3d6000fd5b5050505050565b60008060009054906101000a90046001600160a01b03166001600160a01b0316636b5a3e396040518163ffffffff1660e01b8152600401602060405180830381865afa158015610641573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061066591906111b5565b905090565b60008054604051631ba3adef60e21b8152600481018490526001600160a01b0390911690636e8eb7bc906024016020604051808303816000875af11580156106b6573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061040191906111b5565b6001600160a01b0381161561075e5760006106fc82637365940f60e01b610c8a565b90508061075c5760405162461bcd60e51b8152602060048201526024808201527f446f65736e277420737570706f727420436f6d706f6e656e7420696e7465726660448201526330b1b29760e11b60648201526084015b60405180910390fd5b505b600080546001600160a01b0319166001600160a01b0392909216919091179055565b8051610793906003906020840190610d60565b5050565b60008054604080516395ec5ce360e01b815290516001600160a01b03909216926395ec5ce39260048084019382900301818387803b1580156107d857600080fd5b505af11580156107ec573d6000803e3d6000fd5b50505050565b600280546107ff9061110b565b80601f016020809104026020016040519081016040528092919081815260200182805461082b9061110b565b80156108785780601f1061084d57610100808354040283529160200191610878565b820191906000526020600020905b81548152906001019060200180831161085b57829003601f168201915b505050505081565b60065460405163176fe4cf60e31b81526000916001600160a01b03169063bb7f26789061053090879087908790600401611145565b6001600160a01b038116156109375760006108d7826338cce89560e01b610c8a565b9050806109355760405162461bcd60e51b815260206004820152602660248201527f446f65736e277420737570706f727420636f6d706172746d656e7420696e7465604482015265393330b1b29760d11b6064820152608401610753565b505b600180546001600160a01b0319166001600160a01b0392909216919091179055565b6000805460405163b3cac0a560e01b8152600481018490526001600160a01b039091169063b3cac0a590602401602060405180830381865afa1580156109a3573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610401919061119a565b8051610793906002906020840190610d60565b60005460405163d0bf6d1560e01b8152600481018390526001600160a01b039091169063d0bf6d15906024016105b8565b610a14816109c7565b50565b60405163e478371b60e01b81526001600160a01b0383169063e478371b90610a4590869085906004016111d2565b600060405180830381600087803b158015610a5f57600080fd5b505af1158015610a73573d6000803e3d6000fd5b50505050505050565b600380546107ff9061110b565b6000546040516374acd9c560e11b8152600481018490526001600160a01b0383811660248301529091169063e959b38a90604401610433565b600080600560009054906101000a90046001600160a01b03166001600160a01b0316630574070c6040518163ffffffff1660e01b8152600401606060405180830381865afa158015610b18573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610b3c91906111f6565b509150915081610b9a5760405162461bcd60e51b815260206004820152602360248201527f4d65646963696e6520686173206e6f74206265656e2064656c697665726564206044820152621e595d60ea1b6064820152608401610753565b8015610be85760405162461bcd60e51b815260206004820152601960248201527f4d65646963696e6520616c7265616479207665726966696564000000000000006044820152606401610753565b6040517f0aa2afc0c995677f4763c489682e3335932de0afa3b721c3bf41910edbae8e5690600090a16040517fcc88cac3d005802690761a789ced9fe1ac6030163b628e1d0f0050a3d4261d1d90600090a1600560009054906101000a90046001600160a01b03166001600160a01b0316638d29e2cb6040518163ffffffff1660e01b8152600401600060405180830381600087803b15801561044d57600080fd5b60008080610c9f856301ffc9a760e01b610d2c565b9092509050811580610caf575080155b15610cbf57600092505050610401565b610cd1856001600160e01b0319610d2c565b9092509050811580610ce257508015155b15610cf257600092505050610401565b610cfc8585610d2c565b9092509050600182148015610d115750806001145b15610d2157600192505050610401565b506000949350505050565b6040516301ffc9a760e01b8082526004820183905260009182919060208160248189617530fa905190969095509350505050565b828054610d6c9061110b565b90600052602060002090601f016020900481019282610d8e5760008555610dd4565b82601f10610da757805160ff1916838001178555610dd4565b82800160010185558215610dd4579182015b82811115610dd4578251825591602001919060010190610db9565b50610de0929150610de4565b5090565b5b80821115610de05760008155600101610de5565b600060208284031215610e0b57600080fd5b81356001600160e01b031981168114610e2357600080fd5b9392505050565b634e487b7160e01b600052604160045260246000fd5b600082601f830112610e5157600080fd5b813567ffffffffffffffff80821115610e6c57610e6c610e2a565b604051601f8301601f19908116603f01168101908282118183101715610e9457610e94610e2a565b81604052838152866020858801011115610ead57600080fd5b836020870160208301376000602085830101528094505050505092915050565b6001600160a01b0381168114610a1457600080fd5b60008060408385031215610ef557600080fd5b823567ffffffffffffffff811115610f0c57600080fd5b610f1885828601610e40565b9250506020830135610f2981610ecd565b809150509250929050565b6000815180845260005b81811015610f5a57602081850181015186830182015201610f3e565b81811115610f6c576000602083870101525b50601f01601f19169290920160200192915050565b602081526000610e236020830184610f34565b600080600060408486031215610fa957600080fd5b8335610fb481610ecd565b9250602084013567ffffffffffffffff80821115610fd157600080fd5b818601915086601f830112610fe557600080fd5b813581811115610ff457600080fd5b87602082850101111561100657600080fd5b6020830194508093505050509250925092565b60006020828403121561102b57600080fd5b8135610e2381610ecd565b60006020828403121561104857600080fd5b5035919050565b60006020828403121561106157600080fd5b813567ffffffffffffffff81111561107857600080fd5b61057384828501610e40565b60008060006060848603121561109957600080fd5b83356110a481610ecd565b925060208401356110b481610ecd565b9150604084013567ffffffffffffffff8111156110d057600080fd5b6110dc86828701610e40565b9150509250925092565b600080604083850312156110f957600080fd5b823591506020830135610f2981610ecd565b600181811c9082168061111f57607f821691505b60208210810361113f57634e487b7160e01b600052602260045260246000fd5b50919050565b6001600160a01b03841681526040602082018190528101829052818360608301376000818301606090810191909152601f909201601f1916010192915050565b8051801515811461119557600080fd5b919050565b6000602082840312156111ac57600080fd5b610e2382611185565b6000602082840312156111c757600080fd5b8151610e2381610ecd565b6001600160a01b038316815260406020820181905260009061057390830184610f34565b60008060006060848603121561120b57600080fd5b61121484611185565b925061122260208501611185565b915061123060408501611185565b9050925092509256fea2646970667358221220822877afdaeb5b4d97203f01986ba4f856e743d5ff97993b2fe84c8ce24345bf64736f6c634300080d0033608060405234801561001057600080fd5b5060405161047838038061047883398101604081905261002f91610054565b600180546001600160a01b0319166001600160a01b0392909216919091179055610084565b60006020828403121561006657600080fd5b81516001600160a01b038116811461007d57600080fd5b9392505050565b6103e5806100936000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c80638da5cb5b14610046578063bb7f267814610076578063c954030614610099575b600080fd5b600154610059906001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b6100896100843660046102bf565b6100bc565b604051901515815260200161006d565b6100896100a7366004610342565b60006020819052908152604090205460ff1681565b6001546000906001600160a01b031633146101315760405162461bcd60e51b815260206004820152602a60248201527f7265766572742062656361757365206974206973206e6f7420746865206f776e604482015269195c881858d8dbdd5b9d60b21b60648201526084015b60405180910390fd5b600061013d8484610281565b60408051600481526024810182526020810180516001600160e01b03166001600160e01b03198516179052905191925060009182916001600160a01b038916916101879190610364565b600060405180830381855af49150503d80600081146101c2576040519150601f19603f3d011682016040523d82523d6000602084013e6101c7565b606091505b50909250905081151560000361024f576001600160a01b0387166000908152602081905260409020805460ff191690558051156102075780518082602001fd5b60405162461bcd60e51b815260206004820152601f60248201527f46756e6374696f6e2063616c6c20686173206265656e207265766572746564006044820152606401610128565b5050506001600160a01b0384166000908152602081905260409020805460ff1916600190811790915590509392505050565b6000828260405161029392919061039f565b6040518091039020905092915050565b80356001600160a01b03811681146102ba57600080fd5b919050565b6000806000604084860312156102d457600080fd5b6102dd846102a3565b9250602084013567ffffffffffffffff808211156102fa57600080fd5b818601915086601f83011261030e57600080fd5b81358181111561031d57600080fd5b87602082850101111561032f57600080fd5b6020830194508093505050509250925092565b60006020828403121561035457600080fd5b61035d826102a3565b9392505050565b6000825160005b81811015610385576020818601810151858301520161036b565b81811115610394576000828501525b509190910192915050565b818382376000910190815291905056fea2646970667358221220842ffaa5301c29786eaecffd5c1edae4416e0a105f2221505d20ff0513143d5664736f6c634300080d0033";
+
+    private static String librariesLinkedBinary;
+
+    public static final String FUNC_ACTIVATECOMPARTMENT = "activateCompartment";
+
+    public static final String FUNC_ADDROLE = "addRole";
+
+    public static final String FUNC_ASSIGNEDCOMPARTMENT = "assignedCompartment";
+
+    public static final String FUNC_CORE = "core";
+
+    public static final String FUNC_CREATEAGENT = "createAgent";
+
+    public static final String FUNC_DEACTIVATECOMPARTMENT = "deactivateCompartment";
+
+    public static final String FUNC_GETACTIVECOMPARTMENT = "getActiveCompartment";
+
+    public static final String FUNC_GETROLE = "getRole";
+
+    public static final String FUNC_GETSOCIALAGENTNAME = "getSocialAgentName";
+
+    public static final String FUNC_GETSOCIETYNAME = "getSocietyName";
+
+    public static final String FUNC_HASBEENPLAYEDRUNTIME = "hasBeenPlayedRuntime";
+
+    public static final String FUNC_ISPLAYINGROLE = "isPlayingRole";
+
+    public static final String FUNC_PLAN = "plan";
+
+    public static final String FUNC_PLAYROLECONTRACT = "playRoleContract";
+
+    public static final String FUNC_PLAYER = "player";
+
+    public static final String FUNC_REMOVEROLE = "removeRole";
+
+    public static final String FUNC_SETCOMPARTMENT = "setCompartment";
+
+    public static final String FUNC_SETCORE = "setCore";
+
+    public static final String FUNC_SETNAME = "setName";
+
+    public static final String FUNC_SETSOCIETYID = "setSocietyID";
+
+    public static final String FUNC_SETSOCIETYNAME = "setSocietyName";
+
+    public static final String FUNC_SOCIALAGENTBINDTOSOCIETY = "socialAgentBindToSociety";
+
+    public static final String FUNC_SOCIALAGENTNAME = "socialAgentName";
+
+    public static final String FUNC_SOCIALAGENTUNBIND = "socialAgentUnbind";
+
+    public static final String FUNC_SOCIETYID = "societyID";
+
+    public static final String FUNC_SOCIETYNAME = "societyName";
+
+    public static final String FUNC_SUPPORTSINTERFACE = "supportsInterface";
+
+    public static final String FUNC_VERIFYMEDICINE = "verifyMedicine";
+
+    public static final Event MEDICINECORRECT_EVENT = new Event("MedicineCorrect", 
+            Arrays.<TypeReference<?>>asList());
+    ;
+
+    public static final Event RECEIVEDFORVERIFICATION_EVENT = new Event("ReceivedForVerification", 
+            Arrays.<TypeReference<?>>asList());
+    ;
+
+    @Deprecated
+    protected PharmacyRole(String contractAddress, Web3j web3j, Credentials credentials,
+            BigInteger gasPrice, BigInteger gasLimit) {
+        super(BINARY, contractAddress, web3j, credentials, gasPrice, gasLimit);
+    }
+
+    protected PharmacyRole(String contractAddress, Web3j web3j, Credentials credentials,
+            ContractGasProvider contractGasProvider) {
+        super(BINARY, contractAddress, web3j, credentials, contractGasProvider);
+    }
+
+    @Deprecated
+    protected PharmacyRole(String contractAddress, Web3j web3j,
+            TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit) {
+        super(BINARY, contractAddress, web3j, transactionManager, gasPrice, gasLimit);
+    }
+
+    protected PharmacyRole(String contractAddress, Web3j web3j,
+            TransactionManager transactionManager, ContractGasProvider contractGasProvider) {
+        super(BINARY, contractAddress, web3j, transactionManager, contractGasProvider);
+    }
+
+    public static List<MedicineCorrectEventResponse> getMedicineCorrectEvents(
+            TransactionReceipt transactionReceipt) {
+        List<Contract.EventValuesWithLog> valueList = staticExtractEventParametersWithLog(MEDICINECORRECT_EVENT, transactionReceipt);
+        ArrayList<MedicineCorrectEventResponse> responses = new ArrayList<MedicineCorrectEventResponse>(valueList.size());
+        for (Contract.EventValuesWithLog eventValues : valueList) {
+            MedicineCorrectEventResponse typedResponse = new MedicineCorrectEventResponse();
+            typedResponse.log = eventValues.getLog();
+            responses.add(typedResponse);
+        }
+        return responses;
+    }
+
+    public static MedicineCorrectEventResponse getMedicineCorrectEventFromLog(Log log) {
+        Contract.EventValuesWithLog eventValues = staticExtractEventParametersWithLog(MEDICINECORRECT_EVENT, log);
+        MedicineCorrectEventResponse typedResponse = new MedicineCorrectEventResponse();
+        typedResponse.log = log;
+        return typedResponse;
+    }
+
+    public Flowable<MedicineCorrectEventResponse> medicineCorrectEventFlowable(EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(log -> getMedicineCorrectEventFromLog(log));
+    }
+
+    public Flowable<MedicineCorrectEventResponse> medicineCorrectEventFlowable(
+            DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
+        EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
+        filter.addSingleTopic(EventEncoder.encode(MEDICINECORRECT_EVENT));
+        return medicineCorrectEventFlowable(filter);
+    }
+
+    public static List<ReceivedForVerificationEventResponse> getReceivedForVerificationEvents(
+            TransactionReceipt transactionReceipt) {
+        List<Contract.EventValuesWithLog> valueList = staticExtractEventParametersWithLog(RECEIVEDFORVERIFICATION_EVENT, transactionReceipt);
+        ArrayList<ReceivedForVerificationEventResponse> responses = new ArrayList<ReceivedForVerificationEventResponse>(valueList.size());
+        for (Contract.EventValuesWithLog eventValues : valueList) {
+            ReceivedForVerificationEventResponse typedResponse = new ReceivedForVerificationEventResponse();
+            typedResponse.log = eventValues.getLog();
+            responses.add(typedResponse);
+        }
+        return responses;
+    }
+
+    public static ReceivedForVerificationEventResponse getReceivedForVerificationEventFromLog(
+            Log log) {
+        Contract.EventValuesWithLog eventValues = staticExtractEventParametersWithLog(RECEIVEDFORVERIFICATION_EVENT, log);
+        ReceivedForVerificationEventResponse typedResponse = new ReceivedForVerificationEventResponse();
+        typedResponse.log = log;
+        return typedResponse;
+    }
+
+    public Flowable<ReceivedForVerificationEventResponse> receivedForVerificationEventFlowable(
+            EthFilter filter) {
+        return web3j.ethLogFlowable(filter).map(log -> getReceivedForVerificationEventFromLog(log));
+    }
+
+    public Flowable<ReceivedForVerificationEventResponse> receivedForVerificationEventFlowable(
+            DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
+        EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
+        filter.addSingleTopic(EventEncoder.encode(RECEIVEDFORVERIFICATION_EVENT));
+        return receivedForVerificationEventFlowable(filter);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> activateCompartment(String _compartment) {
+        final Function function = new Function(
+                FUNC_ACTIVATECOMPARTMENT, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _compartment)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> addRole(byte[] spec, String role) {
+        final Function function = new Function(
+                FUNC_ADDROLE, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(spec), 
+                new org.web3j.abi.datatypes.Address(160, role)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<String> assignedCompartment() {
+        final Function function = new Function(FUNC_ASSIGNEDCOMPARTMENT, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
+        return executeRemoteCallSingleValueReturn(function, String.class);
+    }
+
+    public RemoteFunctionCall<String> core() {
+        final Function function = new Function(FUNC_CORE, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
+        return executeRemoteCallSingleValueReturn(function, String.class);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> createAgent(String _socialAgentName) {
+        final Function function = new Function(
+                FUNC_CREATEAGENT, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_socialAgentName)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> deactivateCompartment() {
+        final Function function = new Function(
+                FUNC_DEACTIVATECOMPARTMENT, 
+                Arrays.<Type>asList(), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<String> getActiveCompartment() {
+        final Function function = new Function(FUNC_GETACTIVECOMPARTMENT, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
+        return executeRemoteCallSingleValueReturn(function, String.class);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> getRole(byte[] spec) {
+        final Function function = new Function(
+                FUNC_GETROLE, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(spec)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<String> getSocialAgentName() {
+        final Function function = new Function(FUNC_GETSOCIALAGENTNAME, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
+        return executeRemoteCallSingleValueReturn(function, String.class);
+    }
+
+    public RemoteFunctionCall<String> getSocietyName() {
+        final Function function = new Function(FUNC_GETSOCIETYNAME, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
+        return executeRemoteCallSingleValueReturn(function, String.class);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> hasBeenPlayedRuntime(String _contractAddress,
+            String _functionName) {
+        final Function function = new Function(
+                FUNC_HASBEENPLAYEDRUNTIME, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _contractAddress), 
+                new org.web3j.abi.datatypes.Utf8String(_functionName)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<Boolean> isPlayingRole(byte[] spec) {
+        final Function function = new Function(FUNC_ISPLAYINGROLE, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(spec)), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
+        return executeRemoteCallSingleValueReturn(function, Boolean.class);
+    }
+
+    public RemoteFunctionCall<String> plan() {
+        final Function function = new Function(FUNC_PLAN, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
+        return executeRemoteCallSingleValueReturn(function, String.class);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> playRoleContract(String _contract, String _fn) {
+        final Function function = new Function(
+                FUNC_PLAYROLECONTRACT, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _contract), 
+                new org.web3j.abi.datatypes.Utf8String(_fn)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<String> player() {
+        final Function function = new Function(FUNC_PLAYER, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
+        return executeRemoteCallSingleValueReturn(function, String.class);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> removeRole(byte[] spec) {
+        final Function function = new Function(
+                FUNC_REMOVEROLE, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes32(spec)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> setCompartment(String _compartmentAddresss) {
+        final Function function = new Function(
+                FUNC_SETCOMPARTMENT, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _compartmentAddresss)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> setCore(String _coreAddress) {
+        final Function function = new Function(
+                FUNC_SETCORE, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _coreAddress)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> setName(String _specAgent) {
+        final Function function = new Function(
+                FUNC_SETNAME, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_specAgent)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> setSocietyID(BigInteger _societyID) {
+        final Function function = new Function(
+                FUNC_SETSOCIETYID, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(_societyID)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> setSocietyName(String _societyName) {
+        final Function function = new Function(
+                FUNC_SETSOCIETYNAME, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_societyName)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> socialAgentBindToSociety(String _societyAddress,
+            String mediator, String _socialAgentName) {
+        final Function function = new Function(
+                FUNC_SOCIALAGENTBINDTOSOCIETY, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _societyAddress), 
+                new org.web3j.abi.datatypes.Address(160, mediator), 
+                new org.web3j.abi.datatypes.Utf8String(_socialAgentName)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<String> socialAgentName() {
+        final Function function = new Function(FUNC_SOCIALAGENTNAME, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
+        return executeRemoteCallSingleValueReturn(function, String.class);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> socialAgentUnbind(String _socialAgentName,
+            String mediator) {
+        final Function function = new Function(
+                FUNC_SOCIALAGENTUNBIND, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_socialAgentName), 
+                new org.web3j.abi.datatypes.Address(160, mediator)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<BigInteger> societyID() {
+        final Function function = new Function(FUNC_SOCIETYID, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
+        return executeRemoteCallSingleValueReturn(function, BigInteger.class);
+    }
+
+    public RemoteFunctionCall<String> societyName() {
+        final Function function = new Function(FUNC_SOCIETYNAME, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
+        return executeRemoteCallSingleValueReturn(function, String.class);
+    }
+
+    public RemoteFunctionCall<Boolean> supportsInterface(byte[] interfaceID) {
+        final Function function = new Function(FUNC_SUPPORTSINTERFACE, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes4(interfaceID)), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
+        return executeRemoteCallSingleValueReturn(function, Boolean.class);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> verifyMedicine() {
+        final Function function = new Function(
+                FUNC_VERIFYMEDICINE, 
+                Arrays.<Type>asList(), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    @Deprecated
+    public static PharmacyRole load(String contractAddress, Web3j web3j, Credentials credentials,
+            BigInteger gasPrice, BigInteger gasLimit) {
+        return new PharmacyRole(contractAddress, web3j, credentials, gasPrice, gasLimit);
+    }
+
+    @Deprecated
+    public static PharmacyRole load(String contractAddress, Web3j web3j,
+            TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit) {
+        return new PharmacyRole(contractAddress, web3j, transactionManager, gasPrice, gasLimit);
+    }
+
+    public static PharmacyRole load(String contractAddress, Web3j web3j, Credentials credentials,
+            ContractGasProvider contractGasProvider) {
+        return new PharmacyRole(contractAddress, web3j, credentials, contractGasProvider);
+    }
+
+    public static PharmacyRole load(String contractAddress, Web3j web3j,
+            TransactionManager transactionManager, ContractGasProvider contractGasProvider) {
+        return new PharmacyRole(contractAddress, web3j, transactionManager, contractGasProvider);
+    }
+
+    public static RemoteCall<PharmacyRole> deploy(Web3j web3j, Credentials credentials,
+            ContractGasProvider contractGasProvider, String _planAddress, String _owner) {
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _planAddress), 
+                new org.web3j.abi.datatypes.Address(160, _owner)));
+        return deployRemoteCall(PharmacyRole.class, web3j, credentials, contractGasProvider, getDeploymentBinary(), encodedConstructor);
+    }
+
+    public static RemoteCall<PharmacyRole> deploy(Web3j web3j,
+            TransactionManager transactionManager, ContractGasProvider contractGasProvider,
+            String _planAddress, String _owner) {
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _planAddress), 
+                new org.web3j.abi.datatypes.Address(160, _owner)));
+        return deployRemoteCall(PharmacyRole.class, web3j, transactionManager, contractGasProvider, getDeploymentBinary(), encodedConstructor);
+    }
+
+    @Deprecated
+    public static RemoteCall<PharmacyRole> deploy(Web3j web3j, Credentials credentials,
+            BigInteger gasPrice, BigInteger gasLimit, String _planAddress, String _owner) {
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _planAddress), 
+                new org.web3j.abi.datatypes.Address(160, _owner)));
+        return deployRemoteCall(PharmacyRole.class, web3j, credentials, gasPrice, gasLimit, getDeploymentBinary(), encodedConstructor);
+    }
+
+    @Deprecated
+    public static RemoteCall<PharmacyRole> deploy(Web3j web3j,
+            TransactionManager transactionManager, BigInteger gasPrice, BigInteger gasLimit,
+            String _planAddress, String _owner) {
+        String encodedConstructor = FunctionEncoder.encodeConstructor(Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _planAddress), 
+                new org.web3j.abi.datatypes.Address(160, _owner)));
+        return deployRemoteCall(PharmacyRole.class, web3j, transactionManager, gasPrice, gasLimit, getDeploymentBinary(), encodedConstructor);
+    }
+
+    public static void linkLibraries(List<Contract.LinkReference> references) {
+        librariesLinkedBinary = linkBinaryWithReferences(BINARY, references);
+    }
+
+    private static String getDeploymentBinary() {
+        if (librariesLinkedBinary != null) {
+            return librariesLinkedBinary;
+        } else {
+            return BINARY;
+        }
+    }
+
+    public static class MedicineCorrectEventResponse extends BaseEventResponse {
+    }
+
+    public static class ReceivedForVerificationEventResponse extends BaseEventResponse {
+    }
+}

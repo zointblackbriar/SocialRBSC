@@ -1,0 +1,405 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.13;
+
+import "./LinkedList.sol";
+import "../utils/Utils.sol";
+
+
+contract GoalPlanTree {
+
+    Utils utils;
+
+    constructor(){
+        utils = new Utils();
+    }
+
+    bytes32 public resultKeccak;
+
+    // events to notify off-chain listeners of changes
+    event NodeAdded(bytes32 indexed path, string name, string parent, string data, uint avoidance, uint willingness);
+    event NodeUpdated(bytes32 indexed path, string name, string parent, string data, uint avoidance, uint willingness);
+    event NodeRemoved(bytes32 indexed path);
+    event PlanLinked(bytes32 indexed goalPath, bytes32 indexed planPath);
+    event PlanExecuted(bytes32 indexed planPath);
+    event GoalDropped(bytes32 indexed path);
+    event GoalPriorityDropped(bytes32 indexed path);
+    event DebugUint(string msg, uint256 value);
+    event DebugStr(string msg, string value);
+
+
+    struct Node {
+        string name;
+        string parent;
+        string data;
+        LinkedList avoidanceParameters;
+        LinkedList willingnessParameters;
+        bytes32[] nodes;
+    }
+
+    // @dev noodes should be assigned here
+    mapping(bytes32 => Node) public nodes;
+
+
+    string [] public goalTreeNodeName;
+    string [] public goalTreeNodeParent;
+    string [] public goalTreeNodeData;
+    uint [] public goalTreeNodeAvoidance;
+    uint [] public goalTreeNodeWillingness;
+
+    // track every path added for easier iteration without string conversions
+    bytes32[] public allNodePaths;
+
+    uint public goalTreeNodeNameLength;
+    uint public goalTreeNodeParentLength;
+    uint public goalTreeNodeDataLength;
+    uint public goalTreeNodeAvoidanceLength;
+    uint public goalTreeNodeWillingnessLength;
+
+    /// @dev state updates for state variables
+    function stateUpdateGlobal(string memory _name, string memory _parent, string memory _data, uint avoidance, uint256 willingness) internal {
+        Node storage node = nodes[keccak256(abi.encode(_parent, _name))];
+        goalTreeNodeName.push(node.name);
+        goalTreeNodeParent.push(node.parent);
+        goalTreeNodeData.push(node.data);
+        goalTreeNodeAvoidance.push(avoidance);
+        goalTreeNodeWillingness.push(willingness);
+        goalTreeNodeNameLength = goalTreeNodeName.length;
+        goalTreeNodeParentLength = goalTreeNodeParent.length;
+        goalTreeNodeDataLength = goalTreeNodeData.length;
+        goalTreeNodeAvoidanceLength = goalTreeNodeAvoidance.length;
+        goalTreeNodeWillingnessLength = goalTreeNodeWillingness.length;
+    }
+
+
+    /// @dev adding a subgoal into the MAS system
+    function add(string memory _name, string memory _parent, string memory _data, uint avoidance, uint willingness) public {
+
+        // Create linked lists for avoidance and willingness
+        LinkedList avoidanceParamsLinkedList = new LinkedList();
+        LinkedList willingnessParamsLinkedList = new LinkedList();
+
+        // Insert the avoidance and willingness values into respective linked lists
+        avoidanceParamsLinkedList.insert(avoidance);
+        willingnessParamsLinkedList.insert(willingness);
+
+
+        require(utils.stringToBytes32RobustVersion(_name).length > 0);
+        bytes32 path = keccak256(abi.encode(_parent, _name));
+        Node storage node = nodes[path];
+        require(utils.stringToBytes32RobustVersion(node.name) == 0x0);
+        // Creation of a Node in Solidity
+        nodes[path] = Node({
+            name: _name,
+            parent: _parent,
+            data: _data,
+            nodes: new bytes32[](0),
+            avoidanceParameters: avoidanceParamsLinkedList,
+            willingnessParameters: willingnessParamsLinkedList
+        });
+
+        // link this path into its parent's child list if a parent name is provided
+        if (bytes(_parent).length > 0) {
+            // find parent's path by name (iterate over known paths)
+            for (uint i = 0; i < allNodePaths.length; i++) {
+                bytes32 p = allNodePaths[i];
+                if (keccak256(bytes(nodes[p].name)) == keccak256(bytes(_parent))) {
+                    nodes[p].nodes.push(path);
+                    break;
+                }
+            }
+        }
+        // record the new path globally
+        allNodePaths.push(path);
+        stateUpdateGlobal(_name, _parent, _data, avoidance, willingness);
+        emit NodeAdded(path, _name, _parent, _data, avoidance, willingness);
+    }
+
+    /// @dev update the Goal on the tree
+    function update(string memory _name, string memory _parent, string memory _data, uint avoidance, uint willingness) public {
+        bytes32 path = keccak256(abi.encode(_parent, _name));
+        Node storage node = nodes[path];
+        require(utils.stringToBytes32RobustVersion(node.name).length > 0);
+
+        node.data = _data;
+        node.name = _name;
+        node.parent = _parent;
+        stateUpdateGlobal(_name, _parent, _data, avoidance, willingness);
+        emit NodeUpdated(path, _name, _parent, _data, avoidance, willingness);
+    }
+
+    /// @dev update the Goal by obtaining Node data structure index
+    function getIndex(bytes32[] memory childs, bytes32 _path) internal pure returns(uint256){
+        for (uint256 i = 0; i < childs.length; i++) {
+            if (_path == childs[i]) {
+                return i;
+            }
+        }
+        return childs.length - 1;
+    }
+
+    /// @dev delete goal from the Node structure
+    function remove(string memory _name, string memory _parent) public {
+        // take the path in bytes format
+        bytes32 path = keccak256(abi.encode(_parent, _name));
+        require(nodes[path].nodes.length == 0); //remove leaves ( node without linked nodes)
+        // purge tracking arrays before actually deleting the node
+        _cleanupGlobalArrays(_name, _parent);
+        // remove from allNodePaths as well
+        for (uint i = 0; i < allNodePaths.length; i++) {
+            if (allNodePaths[i] == path) {
+                allNodePaths[i] = allNodePaths[allNodePaths.length - 1];
+                allNodePaths.pop();
+                break;
+            }
+        }
+        delete nodes[path];
+        emit NodeRemoved(path);
+        //remove from parent list of nodes
+        bytes32[] storage childs = nodes[utils.stringToBytes32RobustVersion(_parent)].nodes;
+        if (childs.length > 0) {
+            uint idx = getIndex(childs, path);
+            // shift elements down
+            for (uint i = idx; i < childs.length - 1; i++) {
+                childs[i] = childs[i + 1];
+            }
+            // eliminate the last element
+            delete childs[childs.length - 1];
+            childs.pop(); //instead of childs.length--;
+        }
+
+    }
+    /// @dev keccak function is used for hashing the input string
+    /// @param nodeParent string parameter for nodeParent to hash conversion
+    /// @param nodeName string parameter for nodeName to hash conversion
+    function keccakProcess(string memory nodeParent, string memory nodeName) public {
+        resultKeccak = keccak256(abi.encode(nodeParent, nodeName));
+    }
+
+    // @dev Create a plan in the tree
+    function addPlan(string memory _name, string memory _parent, string memory _data, uint avoidance, uint willingness) public {
+        // Create a new plan
+        add(_name, _parent, _data, avoidance, willingness);
+    }
+
+    function dropGoalRecursively(string memory _parentName, string memory _goalName) public {
+        bytes32 goalPath = keccak256(abi.encode(_parentName, _goalName));
+        Node storage goalNode = nodes[goalPath];
+
+        // Ensure the node exists before proceeding
+        if (bytes(goalNode.name).length == 0) {
+            // nothing to remove
+            return;
+        }
+
+        // Create a temporary array to store the paths of child nodes
+        bytes32[] memory childNodes = goalNode.nodes;
+
+        // Recursively drop all child nodes (subgoals)
+        for (uint256 i = 0; i < childNodes.length; i++) {
+            bytes32 childPath = childNodes[i];
+            Node storage childNode = nodes[childPath];
+            // Recursively drop the child node
+            dropGoalRecursively(goalNode.name, childNode.name);
+        }
+        // After all children have been dropped, delete the goal itself
+        delete nodes[goalPath];
+        emit GoalDropped(goalPath);
+    }
+
+    function dropGoalWithParent(string memory _goalName, string memory _parentGoalName) public {
+        bytes32 goalPath = keccak256(abi.encode(_parentGoalName, _goalName));
+        Node storage goalNode = nodes[goalPath];
+
+        // one level delete (subgoals)
+        bytes32 childPath = goalNode.nodes[goalNode.nodes.length - 1]; // Get the last child node's path
+        Node storage childNode = nodes[childPath];
+
+        // Remove the child node from the nodes array
+        goalNode.nodes.pop();
+
+        // After all children have been dropped, delete the goal itself
+        delete nodes[goalPath];
+
+    }
+
+
+    function linkPlanToGoal(string memory _planName, string memory _goalName) public {
+        bytes32 planPath = keccak256(abi.encode("", _planName)); // Find the plan
+        bytes32 goalPath = keccak256(abi.encode("", _goalName)); // Find the goal
+
+        // Ensure that the plan and goal exist
+        // Ensure that the plan and goal exist
+        require(utils.stringToBytes32RobustVersion(nodes[planPath].name).length > 0, "Plan does not exist");
+        require(utils.stringToBytes32RobustVersion(nodes[goalPath].name).length > 0, "Goal does not exist");
+
+        // Link the plan as a sub-node of the goal
+        nodes[goalPath].nodes.push(planPath);
+        emit PlanLinked(goalPath, planPath);
+    }
+
+    function executePlan(string memory _planName) public {
+        bytes32 planPath = keccak256(abi.encode("", _planName));
+        require(utils.stringToBytes32RobustVersion(nodes[planPath].name).length > 0, "Plan does not exist");
+        // placeholder behaviour: when a plan is executed we simply emit an event
+        emit PlanExecuted(planPath);
+    }
+
+    function removeGoalAndSubgoals(bytes32 _goalPath) public {
+        Node storage goalNode = nodes[_goalPath];
+        while (goalNode.nodes.length > 0) {
+            // take last child path and remove it from the list before recursing
+            bytes32 childPath = goalNode.nodes[goalNode.nodes.length - 1];
+            goalNode.nodes.pop();
+            removeGoalAndSubgoals(childPath);
+        }
+        remove(goalNode.name, goalNode.parent);
+    }
+
+    function isDroppedGoal(string memory _goalName, string memory _parentGoalName) public view returns (bool) {
+        // Generate the path (key) for the goal based on its name
+//        bytes32 goalPath = keccak256(abi.encode("", _goalName));
+        bytes32 goalPath = keccak256(abi.encode(_parentGoalName, _goalName));
+
+        // Check if the goal exists in the mapping
+        // If the name is empty, it means the goal has been deleted/dropped
+        if (bytes(nodes[goalPath].name).length == 0) {
+            return true; // The goal has been dropped
+        }
+
+        return false; // The goal exists in the tree
+    }
+
+
+
+    /// @dev the function is designed to remove goals from a tree structure that do not meet specific criteria for "priority"
+    //    Assume you have a goal with the following properties:
+    //
+    //    Willingness = 5
+    //    Avoidance = 10
+    //    If you call dropLowPriorityGoals(12, 7):
+    //
+    //    The goalâ€™s willingness is less than 12 (so it qualifies for dropping).
+    //    The goalâ€™s avoidance is greater than 7 (so it also qualifies for dropping).
+    //    In this case, the goal will be dropped from the tree.
+    function dropLowPriorityGoals(uint256 _minWillingness, uint256 _maxAvoidance, string memory _parentGoalName) public {
+        // collect targets first to avoid mutating arrays while iterating
+        uint len = allNodePaths.length;
+        bytes32[] memory toDrop = new bytes32[](len);
+        uint dropCount = 0;
+
+        for (uint i = 0; i < len; i++) {
+            bytes32 goalPath = allNodePaths[i];
+            Node storage goalNode = nodes[goalPath];
+            uint256[] memory avoidanceValues = goalNode.avoidanceParameters.getData();
+            uint256[] memory willingnessValues = goalNode.willingnessParameters.getData();
+            if (avoidanceValues.length > 0 && willingnessValues.length > 0) {
+                if (willingnessValues[0] < _minWillingness || avoidanceValues[0] > _maxAvoidance) {
+                    toDrop[dropCount++] = goalPath;
+                }
+            }
+        }
+
+        for (uint j = 0; j < dropCount; j++) {
+            emit DebugUint("droploop", j);
+            bytes32 path = toDrop[j];
+            emit DebugStr("droppath", string(abi.encodePacked(path)));
+            Node storage goalNode = nodes[path];
+            // call recursively using external call so we can catch failures
+            try this.dropGoalRecursively(_parentGoalName, goalNode.name) {
+                emit GoalPriorityDropped(path);
+            } catch {
+                // if something goes wrong we skip but still continue
+            }
+        }
+    }
+
+    /// @dev Get the details of a node in the mapping
+    function getNode(bytes32 _key)
+    public
+    view
+    returns (
+        string memory name,
+        string memory parent,
+        string memory data,
+        LinkedList avoidanceParameters,
+        LinkedList willingnessParameters,
+        bytes32[] memory childNodes
+    )
+    {
+        Node storage node = nodes[_key];
+        return (
+            node.name,
+            node.parent,
+            node.data,
+            node.avoidanceParameters,
+            node.willingnessParameters,
+            node.nodes
+        );
+    }
+
+    /// @dev Get the details of linked list addresses
+    function getLinkedListAddresses(bytes32 _nodePath) public view returns(address avoidanceAddress, address willingnessAddress) {
+        // Access the node from the mapping using its path
+        Node storage node = nodes[_nodePath];
+
+        // Return the addresses of the avoidance and willingness linked lists
+        return (address(node.avoidanceParameters), address(node.willingnessParameters));
+    }
+
+    /// @dev Function to get the avoidance and willingness values for a specific node
+    function getLinkedListValues(bytes32 _nodeAddress) public {
+        // Access the node from the mapping using its path
+        Node storage node = nodes[_nodeAddress];
+
+        // Retrieve the data from the linked lists
+        goalTreeNodeAvoidance = node.avoidanceParameters.getData();
+        goalTreeNodeWillingness = node.willingnessParameters.getData();
+    }
+
+    /// @dev return the list of child paths for a given parent name
+    ///
+    /// The contract stores each node under the key keccak(parent,name). In the
+    /// common case where the parent is the root (""), the path becomes simply
+    /// keccak("", _parent). Earlier versions incorrectly used the raw
+    /// bytes32-conversion of the name which never matched the stored path, so
+    /// getChildren always returned an empty list.  Use the same keccak formula
+    /// as used by `add` so callers receive the actual child list.
+    function getChildren(string memory _parent) public view returns (bytes32[] memory) {
+        bytes32 parentPath = keccak256(abi.encode("", _parent));
+        return nodes[parentPath].nodes;
+    }
+
+    /// @dev helper to purge entries from global tracking arrays on removal
+    function _cleanupGlobalArrays(string memory _name, string memory _parent) internal {
+        // Simple linear scan, not gas optimized but only for trace/debug
+        for (uint i = 0; i < goalTreeNodeName.length; i++) {
+            if (keccak256(abi.encodePacked(goalTreeNodeName[i])) == keccak256(abi.encodePacked(_name)) &&
+                keccak256(abi.encodePacked(goalTreeNodeParent[i])) == keccak256(abi.encodePacked(_parent))) {
+                // remove i-th entry by swapping last and popping
+                goalTreeNodeName[i] = goalTreeNodeName[goalTreeNodeName.length - 1];
+                goalTreeNodeParent[i] = goalTreeNodeParent[goalTreeNodeParent.length - 1];
+                goalTreeNodeData[i] = goalTreeNodeData[goalTreeNodeData.length - 1];
+                goalTreeNodeAvoidance[i] = goalTreeNodeAvoidance[goalTreeNodeAvoidance.length - 1];
+                goalTreeNodeWillingness[i] = goalTreeNodeWillingness[goalTreeNodeWillingness.length - 1];
+
+                goalTreeNodeName.pop();
+                goalTreeNodeParent.pop();
+                goalTreeNodeData.pop();
+                goalTreeNodeAvoidance.pop();
+                goalTreeNodeWillingness.pop();
+                break;
+            }
+        }
+
+        // update lengths
+        goalTreeNodeNameLength = goalTreeNodeName.length;
+        goalTreeNodeParentLength = goalTreeNodeParent.length;
+        goalTreeNodeDataLength = goalTreeNodeData.length;
+        goalTreeNodeAvoidanceLength = goalTreeNodeAvoidance.length;
+        goalTreeNodeWillingnessLength = goalTreeNodeWillingness.length;
+    }
+
+}
+
+
+

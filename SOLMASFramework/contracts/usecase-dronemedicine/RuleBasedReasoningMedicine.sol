@@ -1,0 +1,76 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.13;
+
+import "../usecase-dronemedicine/MedicinePlan.sol";
+import "../usecase-dronemedicine/Drone.sol";
+import "../usecase-dronemedicine/Pharmacy.sol";
+import "../usecase-dronemedicine/Patient.sol";
+import "../goalplantree/GoalPlanTree.sol";
+
+/**
+ * @title RuleBasedReasoningMedicine
+ * @dev Simple rule-based reasoner that chooses which step to perform next
+ * based on the state stored in the plan contract. A small goal‑plan tree is
+ * constructed within the contract to illustrate usage of the GoalPlanTree
+ * component.
+ */
+contract RuleBasedReasoningMedicine {
+
+    MedicinePlan public plan;
+    Drone public drone;
+    Pharmacy public pharmacy;
+    Patient public patient;
+    GoalPlanTree public goalTree;
+
+    event DecisionMade(string action);
+
+    constructor(
+        address _planAddress,
+        address _droneAddress,
+        address _pharmacyAddress,
+        address _patientAddress
+    ) {
+        plan = MedicinePlan(_planAddress);
+        drone = Drone(_droneAddress);
+        pharmacy = Pharmacy(_pharmacyAddress);
+        patient = Patient(_patientAddress);
+
+        // create and populate a simple goal‑plan tree for this delivery scenario
+        goalTree = new GoalPlanTree();
+        goalTree.add("DeliverMedicine", "", "deliver to patient", 0, 0);
+        goalTree.addPlan("VerifyMedicine", "DeliverMedicine", "pharmacy checks", 0, 0);
+        goalTree.addPlan("NotifyPatient", "VerifyMedicine", "patient acknowledgement", 0, 0);
+    }
+
+    function decideNextAction() external returns (string memory) {
+        (bool delivered, bool verified, bool notified) = plan.currentPlan();
+
+        // demonstrate use of the goal plan tree: ensure the root goal still exists
+        bytes32 rootPath = keccak256(abi.encode("", "DeliverMedicine"));
+        (string memory nameRoot, , , , , ) = goalTree.getNode(rootPath);
+        require(bytes(nameRoot).length > 0, "Goal tree not initialized");
+
+        if (!delivered) {
+            drone.deliverMedicine();
+            // mark plan executed
+            goalTree.executePlan("DeliverMedicine");
+            emit DecisionMade("Deliver");
+            return "Deliver";
+        } else if (delivered && !verified) {
+            pharmacy.verifyMedicine();
+            goalTree.executePlan("VerifyMedicine");
+            emit DecisionMade("Verify");
+            return "Verify";
+        } else if (verified && !notified) {
+            patient.confirmReceipt();
+            goalTree.executePlan("NotifyPatient");
+            emit DecisionMade("Notify");
+            return "Notify";
+        }
+
+        // once everything is done, clear out the goal tree
+        goalTree.dropGoalRecursively("", "DeliverMedicine");
+        emit DecisionMade("AllDone");
+        return "AllDone";
+    }
+}

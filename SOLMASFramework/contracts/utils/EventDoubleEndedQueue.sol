@@ -1,0 +1,51 @@
+//SPDX-License-Identifier: AGPL-3.0
+pragma solidity 0.8.13;
+
+// @title Double Ended Event Queue for Events
+// @dev events can be the main messaging structure for DeliberationCycle
+// @author Orcun Oruc
+// @notice It should be decided whether the single ended or double ended event queue will be used
+contract EventDoubleEndedQueue {
+    // @dev deque mapping data structure for deque operation
+    mapping(uint256 => uint) deque;
+    // @dev fixed number of the last line of a queue (FIFO)
+    uint256 first = 2 ** 255;
+    // @dev size of the queue
+    uint256 last = first - 1;
+
+    // @dev push to the beginning
+    function pushLeft(uint _data) public {
+        first -= 1;
+        deque[first] = _data;
+    }
+
+    // @dev push to the end
+    function pushRight(uint _data) public {
+        last += 1;
+        deque[last] = _data;
+    }
+
+    // @dev pop element from the beginning of FIFO
+    function popLeft() public returns (uint _data) {
+        require(last >= first, "non-empty queue"); // non-empty deque
+
+        _data = deque[first];
+        {}
+
+        delete deque[first]; //delete from the beginning of the queue
+        first += 1;
+    }
+
+    // @dev pop element from the last of FIFO
+    function popRight() public returns (uint _data) {
+        require(last >= first); // non-empty deque
+
+        _data = deque[last];
+
+        delete deque[last];
+        last -= 1;
+    }
+}
+
+
+

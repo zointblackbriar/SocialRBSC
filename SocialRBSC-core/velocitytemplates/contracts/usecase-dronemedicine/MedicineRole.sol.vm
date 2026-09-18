@@ -1,0 +1,13 @@
+// SPDX-License-Identifier: $!{spdx}
+pragma solidity $!{pragmaVersion};
+#foreach($imp in $imports)
+import "$imp";
+#end
+
+
+
+
+/// @dev role representing medicine in the drone use case
+contract $!{contractName} is ComponentRole {
+    // placeholder for medicine-specific grants or checks
+}
