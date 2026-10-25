@@ -10,7 +10,7 @@ describe("SocialAgentInitiator", function() {
         socialAgent = await socialAgentContract.deploy();
         console.log("socialAgent: ", socialAgent)
 
-        const ConcreteMediator = await ethers.getContractFactory("ConcreteMediator")
+        const ConcreteMediator = await ethers.getContractFactory("contracts/societypattern/ConcreteMediator.sol:ConcreteMediator")
         concreteMediator = await ConcreteMediator.deploy();
 
         const Society = await ethers.getContractFactory("Society");

@@ -29,6 +29,10 @@ contract MedicalSupplyMission is ICompartmentCore {
         uint256 itemCount;
     }
 
+    // Society/compartment owner: the only authority allowed to bind or
+    // unbind role players (access control on role-binding transitions).
+    address public society;
+
     bytes32 public missionId;
     uint256 public deliveryDeadline;
     bytes32[] public requiredSupplies;
@@ -36,6 +40,10 @@ contract MedicalSupplyMission is ICompartmentCore {
 
     mapping(address => mapping(string => RoleBinding)) public agentRoles;
     mapping(string => address[]) public roleMembers;
+    // Populated through registerSupply(); Solidity mappings require no
+    // explicit initialization, so Slither's uninitialized-state detector is a
+    // false positive here (it ignores element-level assignments to mappings).
+    // slither-disable-next-line uninitialized-state
     mapping(bytes32 => Supply) public supplyInventory;
     mapping(address => DeliveryStatus) public deliveryStatus;
 
@@ -60,6 +68,18 @@ contract MedicalSupplyMission is ICompartmentCore {
         uint256 timestamp
     );
 
+    constructor() {
+        society = msg.sender;
+    }
+
+    modifier onlySociety() {
+        require(
+            msg.sender == society,
+            "Only the society can manage role bindings"
+        );
+        _;
+    }
+
     modifier onlyInRole(string memory requiredRole) {
         require(
             agentRoles[msg.sender][requiredRole].isActive,
@@ -77,7 +97,6 @@ contract MedicalSupplyMission is ICompartmentCore {
     }
 
     modifier avoidHazardZones(string memory zone) {
-        // Motivational constraint: Avoidance of hazardous zones
         require(
             !isClassifiedAsHazard(zone),
             "Avoidance motive prevents entry to hazardous zone"
@@ -88,7 +107,9 @@ contract MedicalSupplyMission is ICompartmentCore {
     function bindAgentToRole(
         address agent,
         string memory role
-    ) public override roleNotInUse(agent, role) {
+    ) public override onlySociety roleNotInUse(agent, role) {
+        // Checks-effects-interactions: state is updated before the event is
+        // emitted and no external call is performed.
         agentRoles[agent][role] = RoleBinding({
             agent: agent,
             roleType: role,
@@ -100,6 +121,19 @@ contract MedicalSupplyMission is ICompartmentCore {
         emit RoleBound(agent, role, block.timestamp);
     }
 
+    function unbindAgentFromRole(
+        address agent,
+        string memory role
+    ) public onlySociety {
+        require(
+            agentRoles[agent][role].isActive,
+            "Agent does not hold this role"
+        );
+
+        agentRoles[agent][role].isActive = false;
+        emit RoleUnbound(agent, role, block.timestamp);
+    }
+
     function hasRole(
         address agent,
         string memory role
@@ -107,13 +141,22 @@ contract MedicalSupplyMission is ICompartmentCore {
         return agentRoles[agent][role].isActive;
     }
 
+    function registerSupply(
+        bytes32 id,
+        string memory name,
+        uint256 quantity,
+        uint256 weight
+    ) public onlySociety {
+        supplyInventory[id] = Supply(id, name, quantity, weight);
+    }
+
     function acceptDelivery(
         address provider,
         bytes32[] memory suppliesList
-    ) public {
+    ) public onlyInRole("DeliveryProvider") {
         require(
-            agentRoles[provider]["DeliveryProvider"].isActive,
-            "Provider must have DeliveryProvider role"
+            msg.sender == provider,
+            "Only the provider can accept the delivery"
         );
 
         TotalWeight memory packageWeight = calculateWeight(suppliesList);
@@ -162,7 +205,6 @@ contract MedicalSupplyMission is ICompartmentCore {
         emit DeliveryConfirmed(msg.sender, provider, block.timestamp);
     }
 
-    // Helper functions (domain-specific logic to be completed per deployment)
     function calculateWeight(bytes32[] memory supplies)
         private view returns (TotalWeight memory) {
         uint256 total = 0;
@@ -174,19 +216,16 @@ contract MedicalSupplyMission is ICompartmentCore {
 
     function checkUAVCapacity(address uav, TotalWeight memory weight)
         private view returns (bool) {
-        // Capacity check - domain-specific; returns true by default
         return weight.grams > 0;
     }
 
     function isClassifiedAsHazard(string memory zone)
         private pure returns (bool) {
-        // Hazard classification - domain-specific; returns false by default
         return false;
     }
 
     function verifyValidatorSignature(bytes calldata signature)
         private pure returns (bool) {
-        // Signature verification - domain-specific; returns true by default
         return signature.length > 0;
     }
 }

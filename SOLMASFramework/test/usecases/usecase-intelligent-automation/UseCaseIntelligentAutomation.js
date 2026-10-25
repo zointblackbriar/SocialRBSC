@@ -87,7 +87,7 @@ describe('Use Case Intelligent Automation', function () {
             const Society = await ethers.getContractFactory('Society');
             society = await Society.deploy();
             await society.deployed();
-            const ConcreteMediator = await ethers.getContractFactory('ConcreteMediator');
+            const ConcreteMediator = await ethers.getContractFactory('contracts/societypattern/ConcreteMediator.sol:ConcreteMediator');
             mediator = await ConcreteMediator.deploy();
             await mediator.deployed();
             // create a social agent and bind to the society

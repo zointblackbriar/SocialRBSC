@@ -1,0 +1,146 @@
+{
+  "generatedAt": "2026-10-25T02:12:51.021Z",
+  "environment": {
+    "hardhat": "2.29.1",
+    "ethers": "ethers/5.8.0",
+    "solc": "0.8.13",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "network": "hardhat"
+  },
+  "tables": {
+    "7": {
+      "roleBinding": {
+        "baseline": 89998,
+        "socialrbsc": 161807,
+        "overheadPct": 79.78955087890841
+      },
+      "lifecycle": {
+        "baseline": 100058,
+        "socialrbsc": 89205,
+        "overheadPct": -10.846708908832877
+      },
+      "deployments": {
+        "roleRegistry": 161345,
+        "compartment": 1266714,
+        "roleBehaviour": 501965
+      }
+    },
+    "8": {
+      "deployment": 2112911,
+      "bindProvider": 161807,
+      "bindValidator": 161711,
+      "mediatorRegistration": 47437,
+      "inTransit": 49768,
+      "delivered": 32705,
+      "confirmation": 32255,
+      "operationsSubtotal": 485683,
+      "total": 2598594
+    },
+    "9": [
+      {
+        "N": 1,
+        "bindingTotal": 161807,
+        "gasPerBinding": 161807,
+        "deployment": 1266714
+      },
+      {
+        "N": 5,
+        "bindingTotal": 740635,
+        "gasPerBinding": 148127,
+        "deployment": 1266714
+      },
+      {
+        "N": 10,
+        "bindingTotal": 1464158,
+        "gasPerBinding": 146416,
+        "deployment": 1266714
+      },
+      {
+        "N": 25,
+        "bindingTotal": 3634739,
+        "gasPerBinding": 145390,
+        "deployment": 1266714
+      },
+      {
+        "N": 50,
+        "bindingTotal": 7252402,
+        "gasPerBinding": 145048,
+        "deployment": 1266714
+      }
+    ],
+    "10": [
+      {
+        "A": 1,
+        "agents": 2,
+        "bindings": 323530,
+        "cycles": 114728,
+        "total": 1704972,
+        "perAgent": 438258,
+        "deployment": 1266714
+      },
+      {
+        "A": 5,
+        "agents": 10,
+        "bindings": 1480838,
+        "cycles": 573640,
+        "total": 3321192,
+        "perAgent": 410896,
+        "deployment": 1266714
+      },
+      {
+        "A": 10,
+        "agents": 20,
+        "bindings": 2927476,
+        "cycles": 1147244,
+        "total": 5341434,
+        "perAgent": 407472,
+        "deployment": 1266714
+      }
+    ],
+    "11": [
+      {
+        "T": 10,
+        "insertTotal": 1124909,
+        "insertPerNode": 112491,
+        "traverse": 95494,
+        "traversePerNode": 9549,
+        "deployment": 381517
+      },
+      {
+        "T": 50,
+        "insertTotal": 5577777,
+        "insertPerNode": 111556,
+        "traverse": 286000,
+        "traversePerNode": 5720,
+        "deployment": 381517
+      },
+      {
+        "T": 100,
+        "insertTotal": 11144027,
+        "insertPerNode": 111440,
+        "traverse": 524141,
+        "traversePerNode": 5241,
+        "deployment": 381517
+      },
+      {
+        "T": 500,
+        "insertTotal": 55687215,
+        "insertPerNode": 111374,
+        "traverse": 2429621,
+        "traversePerNode": 4859,
+        "deployment": 381517
+      },
+      {
+        "T": 1000,
+        "insertTotal": 111367715,
+        "insertPerNode": 111368,
+        "traverse": 4812349,
+        "traversePerNode": 4812,
+        "deployment": 381517
+      }
+    ]
+  }
+}

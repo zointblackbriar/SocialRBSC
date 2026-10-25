@@ -55,7 +55,7 @@ describe("SocialAgentDeliberationCycle", async function() {
         socialAgentBelief = await SocialAgentBelief.deploy();
         await socialAgentBelief.deployed();
 
-        const ConcreteMediator = await ethers.getContractFactory("ConcreteMediator");
+        const ConcreteMediator = await ethers.getContractFactory("contracts/societypattern/ConcreteMediator.sol:ConcreteMediator");
         concreteMediator = await ConcreteMediator.deploy();
         await concreteMediator.deployed();
 

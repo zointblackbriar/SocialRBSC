@@ -1,0 +1,179 @@
+﻿Multiple frameworks detected: solc, Solc-json. Using solc (highest priority). Use --compile-force-framework to override.
+'C:\Users\zoint\AppData\Local\hardhat-nodejs\Cache\compilers-v2\windows-amd64\solc-windows-amd64-v0.8.13+commit.abaa5c0e.exe --version' running
+'C:\Users\zoint\AppData\Local\hardhat-nodejs\Cache\compilers-v2\windows-amd64\solc-windows-amd64-v0.8.13+commit.abaa5c0e.exe contracts\paper_snippets\ConcreteMediator.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --allow-paths .,D:\Projects\mountidablog\publicationsfordoctoralthesis\SocialRbSCJournalPaper\MDPI-Template\socialagentrolebasedsmartcontract\SOLMASFramework\contracts\paper_snippets' running
+Multiple frameworks detected: solc, Solc-json. Using solc (highest priority). Use --compile-force-framework to override.
+'C:\Users\zoint\AppData\Local\hardhat-nodejs\Cache\compilers-v2\windows-amd64\solc-windows-amd64-v0.8.13+commit.abaa5c0e.exe --version' running
+'C:\Users\zoint\AppData\Local\hardhat-nodejs\Cache\compilers-v2\windows-amd64\solc-windows-amd64-v0.8.13+commit.abaa5c0e.exe contracts\paper_snippets\DeliveryProviderRole.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --allow-paths .,D:\Projects\mountidablog\publicationsfordoctoralthesis\SocialRbSCJournalPaper\MDPI-Template\socialagentrolebasedsmartcontract\SOLMASFramework\contracts\paper_snippets' running
+Compilation warnings/errors on contracts\paper_snippets\DeliveryProviderRole.sol:
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> contracts/paper_snippets/DeliveryProviderRole.sol:100:27:
+
+    |
+
+100 |     function isHazardZone(string memory zone) private pure returns (bool) {
+
+    |                           ^^^^^^^^^^^^^^^^^^
+
+
+
+
+Multiple frameworks detected: solc, Solc-json. Using solc (highest priority). Use --compile-force-framework to override.
+'C:\Users\zoint\AppData\Local\hardhat-nodejs\Cache\compilers-v2\windows-amd64\solc-windows-amd64-v0.8.13+commit.abaa5c0e.exe --version' running
+'C:\Users\zoint\AppData\Local\hardhat-nodejs\Cache\compilers-v2\windows-amd64\solc-windows-amd64-v0.8.13+commit.abaa5c0e.exe contracts\paper_snippets\GoalPlanTreeBenchmark.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --allow-paths .,D:\Projects\mountidablog\publicationsfordoctoralthesis\SocialRbSCJournalPaper\MDPI-Template\socialagentrolebasedsmartcontract\SOLMASFramework\contracts\paper_snippets' running
+Multiple frameworks detected: solc, Solc-json. Using solc (highest priority). Use --compile-force-framework to override.
+'C:\Users\zoint\AppData\Local\hardhat-nodejs\Cache\compilers-v2\windows-amd64\solc-windows-amd64-v0.8.13+commit.abaa5c0e.exe --version' running
+'C:\Users\zoint\AppData\Local\hardhat-nodejs\Cache\compilers-v2\windows-amd64\solc-windows-amd64-v0.8.13+commit.abaa5c0e.exe contracts\paper_snippets\MedicalSupplyMission.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --allow-paths .,D:\Projects\mountidablog\publicationsfordoctoralthesis\SocialRbSCJournalPaper\MDPI-Template\socialagentrolebasedsmartcontract\SOLMASFramework\contracts\paper_snippets' running
+Compilation warnings/errors on contracts\paper_snippets\MedicalSupplyMission.sol:
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> contracts/paper_snippets/MedicalSupplyMission.sol:217:31:
+
+    |
+
+217 |     function checkUAVCapacity(address uav, TotalWeight memory weight)
+
+    |                               ^^^^^^^^^^^
+
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+
+   --> contracts/paper_snippets/MedicalSupplyMission.sol:222:35:
+
+    |
+
+222 |     function isClassifiedAsHazard(string memory zone)
+
+    |                                   ^^^^^^^^^^^^^^^^^^
+
+
+
+Warning: Function state mutability can be restricted to pure
+
+   --> contracts/paper_snippets/MedicalSupplyMission.sol:217:5:
+
+    |
+
+217 |     function checkUAVCapacity(address uav, TotalWeight memory weight)
+
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+
+
+slither.exe : INFO:Detectors:
+At line:6 char:1
++ & slither "contracts\paper_snippets" --solc $solc 2>&1 | Out-File -En ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (INFO:Detectors::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Detector: solc-version
+Version constraint 0.8.13 contains known severe issues (https://solidity.readthedocs.io/en/latest/bugs.html)
+	- VerbatimInvalidDeduplication
+	- FullInlinerNonExpressionSplitArgumentEvaluationOrder
+	- MissingSideEffectsOnSelectorAccess
+	- StorageWriteRemovalBeforeConditionalTermination
+	- AbiReencodingHeadOverflowWithStaticArrayCleanup
+	- DirtyBytesArrayToStorage
+	- InlineAssemblyMemorySideEffects
+	- DataLocationChangeInInternalOverride
+	- NestedCalldataArrayAbiReencodingSizeValidation.
+It is used by:
+	- 0.8.13 (contracts/paper_snippets/ConcreteMediator.sol#2)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity
+INFO:Detectors:
+Detector: naming-convention
+Parameter ConcreteMediator.bindAgent(address,string)._societyAddress 
+(contracts/paper_snippets/ConcreteMediator.sol#30) is not in mixedCase
+Parameter ConcreteMediator.bindAgent(address,string)._socialAgentName 
+(contracts/paper_snippets/ConcreteMediator.sol#31) is not in mixedCase
+Parameter ConcreteMediator.unbindAgent(string)._socialAgentName (contracts/paper_snippets/ConcreteMediator.sol#40) is 
+not in mixedCase
+Parameter ConcreteMediator.getAgentFromSociety(string)._agentName (contracts/paper_snippets/ConcreteMediator.sol#45) 
+is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions
+INFO:Detectors:
+Detector: constable-states
+ConcreteMediator.isMediator (contracts/paper_snippets/ConcreteMediator.sol#12) should be constant 
+Reference: 
+https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant
+INFO:Detectors:
+Detector: immutable-states
+ConcreteMediator.society (contracts/paper_snippets/ConcreteMediator.sol#15) should be immutable 
+Reference: 
+https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-immutable
+INFO:Detectors:
+Detector: missing-zero-check
+DeliveryProviderRole.constructor(address,address)._compartment (contracts/paper_snippets/DeliveryProviderRole.sol#44) 
+lacks a zero-check on :
+		- compartment = _compartment (contracts/paper_snippets/DeliveryProviderRole.sol#45)
+DeliveryProviderRole.constructor(address,address)._uavAgent (contracts/paper_snippets/DeliveryProviderRole.sol#44) 
+lacks a zero-check on :
+		- uavAgent = _uavAgent (contracts/paper_snippets/DeliveryProviderRole.sol#46)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-zero-address-validation
+INFO:Detectors:
+Detector: solc-version
+Version constraint ^0.8.0 contains known severe issues (https://solidity.readthedocs.io/en/latest/bugs.html)
+	- FullInlinerNonExpressionSplitArgumentEvaluationOrder
+	- MissingSideEffectsOnSelectorAccess
+	- AbiReencodingHeadOverflowWithStaticArrayCleanup
+	- DirtyBytesArrayToStorage
+	- DataLocationChangeInInternalOverride
+	- NestedCalldataArrayAbiReencodingSizeValidation
+	- SignedImmutables
+	- ABIDecodeTwoDimensionalArrayMemory
+	- KeccakCaching.
+It is used by:
+	- ^0.8.0 (contracts/paper_snippets/DeliveryProviderRole.sol#2)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity
+INFO:Detectors:
+Detector: immutable-states
+DeliveryProviderRole.compartment (contracts/paper_snippets/DeliveryProviderRole.sol#14) should be immutable 
+DeliveryProviderRole.uavAgent (contracts/paper_snippets/DeliveryProviderRole.sol#15) should be immutable 
+Reference: 
+https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-immutable
+INFO:Detectors:
+Detector: solc-version
+Version constraint ^0.8.0 contains known severe issues (https://solidity.readthedocs.io/en/latest/bugs.html)
+	- FullInlinerNonExpressionSplitArgumentEvaluationOrder
+	- MissingSideEffectsOnSelectorAccess
+	- AbiReencodingHeadOverflowWithStaticArrayCleanup
+	- DirtyBytesArrayToStorage
+	- DataLocationChangeInInternalOverride
+	- NestedCalldataArrayAbiReencodingSizeValidation
+	- SignedImmutables
+	- ABIDecodeTwoDimensionalArrayMemory
+	- KeccakCaching.
+It is used by:
+	- ^0.8.0 (contracts/paper_snippets/GoalPlanTreeBenchmark.sol#2)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity
+INFO:Detectors:
+Detector: solc-version
+Version constraint ^0.8.0 contains known severe issues (https://solidity.readthedocs.io/en/latest/bugs.html)
+	- FullInlinerNonExpressionSplitArgumentEvaluationOrder
+	- MissingSideEffectsOnSelectorAccess
+	- AbiReencodingHeadOverflowWithStaticArrayCleanup
+	- DirtyBytesArrayToStorage
+	- DataLocationChangeInInternalOverride
+	- NestedCalldataArrayAbiReencodingSizeValidation
+	- SignedImmutables
+	- ABIDecodeTwoDimensionalArrayMemory
+	- KeccakCaching.
+It is used by:
+	- ^0.8.0 (contracts/paper_snippets/MedicalSupplyMission.sol#2)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity
+INFO:Detectors:
+Detector: constable-states
+MedicalSupplyMission.deliveryDeadline (contracts/paper_snippets/MedicalSupplyMission.sol#37) should be constant 
+MedicalSupplyMission.hospitalLocation (contracts/paper_snippets/MedicalSupplyMission.sol#39) should be constant 
+MedicalSupplyMission.missionId (contracts/paper_snippets/MedicalSupplyMission.sol#36) should be constant 
+Reference: 
+https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant
+INFO:Detectors:
+Detector: immutable-states
+MedicalSupplyMission.society (contracts/paper_snippets/MedicalSupplyMission.sol#34) should be immutable 
+Reference: 
+https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-immutable
+INFO:Slither:contracts\paper_snippets analyzed (7 contracts with 102 detectors), 18 result(s) found

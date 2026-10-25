@@ -1,0 +1,9 @@
+# Verbatim excerpt from SOLMASFramework/gas-report-testcases.txt in
+# https://github.com/zointblackbriar/SocialRBSC (main branch), "Deployments" section.
+# Only the five SocialRbSC module contracts referenced by Table 6 are retained.
+# Columns: contract | min | max | avg | % of block limit.
+CompartmentInitiator | 564035 | 564047 | 564045 | 0.9 %
+ComponentCore | - | - | 580896 | 1 %
+DeepRolePlayer | - | - | 463143 | 0.8 %
+GoalPlanTree | - | - | 3601662 | 6 %
+SocialAgentDeliberationCycle | 1837931 | 1837955 | 1837951 | 3.1 %

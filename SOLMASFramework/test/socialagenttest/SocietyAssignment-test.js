@@ -22,7 +22,7 @@ describe("SocietyMediator", function () {
         await socialAgent.deployed();
 
         // Deploy ConcreteMediator contract
-        ConcreteMediator = await ethers.getContractFactory("ConcreteMediator");
+        ConcreteMediator = await ethers.getContractFactory("contracts/societypattern/ConcreteMediator.sol:ConcreteMediator");
         concreteMediator = await ConcreteMediator.deploy();
         await concreteMediator.deployed();
 

@@ -55,7 +55,6 @@ contract DeliveryProviderRole is IDeliveryProviderRole {
             "Role must be in PENDING state"
         );
 
-        // Precondition check: capacity check
         require(
             checkBatteryCapacity(),
             "Insufficient battery for delivery"
@@ -75,7 +74,6 @@ contract DeliveryProviderRole is IDeliveryProviderRole {
             "Must have accepted delivery first"
         );
 
-        // Motivational constraint: Avoidance of hazardous zones
         require(
             !isHazardZone(zone),
             "Avoidance motive: Cannot enter hazardous zone"
@@ -91,12 +89,10 @@ contract DeliveryProviderRole is IDeliveryProviderRole {
             "Must be in transit to complete"
         );
 
-        // Postcondition: Record completion timestamp
         currentStatus = DeliveryStatus.DELIVERED;
         emit DeliveryCompleted(msg.sender, block.timestamp);
     }
 
-    // Helper functions for BDI integration (domain-specific logic to be completed per deployment)
     function checkBatteryCapacity() private pure returns (bool) {
         return true;
     }

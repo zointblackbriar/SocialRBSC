@@ -35,7 +35,7 @@ describe('E-commerce Customer Service', function () {
         society = await Society.deploy();
         await society.deployed();
 
-        const ConcreteMediator = await ethers.getContractFactory('ConcreteMediator');
+        const ConcreteMediator = await ethers.getContractFactory('contracts/societypattern/ConcreteMediator.sol:ConcreteMediator');
         mediator = await ConcreteMediator.deploy();
         await mediator.deployed();
 

@@ -30,7 +30,7 @@ describe("Case Study Supply Chain Network", function() {
         await socialAgent.deployed();
 
         // Deploy ConcreteMediator contract
-        const ConcreteMediator = await ethers.getContractFactory("ConcreteMediator");
+        const ConcreteMediator = await ethers.getContractFactory("contracts/societypattern/ConcreteMediator.sol:ConcreteMediator");
         concreteMediator = await ConcreteMediator.deploy();
         await concreteMediator.deployed();
 

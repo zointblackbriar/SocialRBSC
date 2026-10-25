@@ -151,7 +151,7 @@ describe("Drone Medicine Delivery Scenario", function () {
         let patientRole;
 
         beforeEach(async function () {
-            ConcreteMediator = await ethers.getContractFactory("ConcreteMediator");
+            ConcreteMediator = await ethers.getContractFactory("contracts/societypattern/ConcreteMediator.sol:ConcreteMediator");
             mediator = await ConcreteMediator.deploy();
             await mediator.deployed();
 
