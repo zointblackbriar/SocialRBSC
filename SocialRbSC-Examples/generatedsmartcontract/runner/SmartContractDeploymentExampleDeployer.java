@@ -22,10 +22,10 @@ public class SmartContractDeploymentExampleDeployer {
         logger.info("Connected to blockchain at http://localhost:8545");
 
         // Deploy contracts for detected annotations:
-        // @Role: ProductionManagerRole, QualityAssuranceRole, SupplyChainRole, CoordinationRole, QualityAssurance, SupervisorRole, BlockchainDeployer, ProductionManager, ManufacturingWorker
+        // @Role: ProductionManagerRole, QualityAssuranceRole, SupplyChainRole, CoordinationRole, SupervisorRole, QualityAssurance, BlockchainDeployer, ManufacturingWorker, ProductionManager
         // @SocialAgent: SmartContractDeploymentExample, ManufacturingCoordinator
         // @Precondition: inspectProduct
-        // @RoleMethod: scheduleProduction, monitorExecution, getTaskCount, performQualityCheck, reportMetrics, updateInventory, procureRawMaterials, synchronizeComponents, resolveConflicts, achieve, achieve, achieve, inspectProduct, oversee, approveQualityMetrics, deployContract, scheduleProduction, performTask
+        // @RoleMethod: scheduleProduction, monitorExecution, getTaskCount, performQualityCheck, reportMetrics, updateInventory, procureRawMaterials, synchronizeComponents, resolveConflicts, achieve, achieve, achieve, oversee, approveQualityMetrics, inspectProduct, deployContract, performTask, scheduleProduction
         // @Compartment: ProductionCompartment, QualityCompartment, ProductionFloorCompartment, QualityControlCompartment
         // @SocialAgentPlan: CoordinationPlan
         // @SocialAgentGoal: ManufacturingGoal
@@ -37,11 +37,11 @@ public class SmartContractDeploymentExampleDeployer {
         deployQualityAssuranceRole();
         deploySupplyChainRole();
         deployCoordinationRole();
-        deployQualityAssurance();
         deploySupervisorRole();
+        deployQualityAssurance();
         deployBlockchainDeployer();
-        deployProductionManager();
         deployManufacturingWorker();
+        deployProductionManager();
         deploySmartContractDeploymentExample();
         deployManufacturingCoordinator();
         deployScheduleProduction();
@@ -54,9 +54,9 @@ public class SmartContractDeploymentExampleDeployer {
         deploySynchronizeComponents();
         deployResolveConflicts();
         deployAchieve();
-        deployInspectProduct();
         deployOversee();
         deployApproveQualityMetrics();
+        deployInspectProduct();
         deployDeployContract();
         deployPerformTask();
         deployProductionCompartment();
@@ -97,24 +97,24 @@ public class SmartContractDeploymentExampleDeployer {
         // Deploy CoordinationRole contract (original elements: CoordinationRole) -- detected annotations: Role
     }
 
-    private void deployQualityAssurance() throws Exception {
-        // Deploy QualityAssurance contract (original elements: QualityAssurance) -- detected annotations: Role
-    }
-
     private void deploySupervisorRole() throws Exception {
         // Deploy SupervisorRole contract (original elements: SupervisorRole) -- detected annotations: Role
+    }
+
+    private void deployQualityAssurance() throws Exception {
+        // Deploy QualityAssurance contract (original elements: QualityAssurance) -- detected annotations: Role
     }
 
     private void deployBlockchainDeployer() throws Exception {
         // Deploy BlockchainDeployer contract (original elements: BlockchainDeployer) -- detected annotations: Role
     }
 
-    private void deployProductionManager() throws Exception {
-        // Deploy ProductionManager contract (original elements: ProductionManager) -- detected annotations: Role
-    }
-
     private void deployManufacturingWorker() throws Exception {
         // Deploy ManufacturingWorker contract (original elements: ManufacturingWorker) -- detected annotations: Role
+    }
+
+    private void deployProductionManager() throws Exception {
+        // Deploy ProductionManager contract (original elements: ProductionManager) -- detected annotations: Role
     }
 
     private void deploySmartContractDeploymentExample() throws Exception {
@@ -165,16 +165,16 @@ public class SmartContractDeploymentExampleDeployer {
         // Deploy achieve contract (original elements: achieve) -- detected annotations: RoleMethod
     }
 
-    private void deployInspectProduct() throws Exception {
-        // Deploy inspectProduct contract (original elements: inspectProduct) -- detected annotations: RoleMethod
-    }
-
     private void deployOversee() throws Exception {
         // Deploy oversee contract (original elements: oversee) -- detected annotations: RoleMethod
     }
 
     private void deployApproveQualityMetrics() throws Exception {
         // Deploy approveQualityMetrics contract (original elements: approveQualityMetrics) -- detected annotations: RoleMethod
+    }
+
+    private void deployInspectProduct() throws Exception {
+        // Deploy inspectProduct contract (original elements: inspectProduct) -- detected annotations: RoleMethod
     }
 
     private void deployDeployContract() throws Exception {
