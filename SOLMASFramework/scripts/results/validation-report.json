@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-25T02:12:51.054Z",
-  "measurementsGeneratedAt": "2026-10-25T02:12:51.021Z",
+  "generatedAt": "2026-10-26T22:39:39.620Z",
+  "measurementsGeneratedAt": "2026-10-26T22:39:39.576Z",
   "environment": {
     "hardhat": "2.29.1",
     "ethers": "ethers/5.8.0",
@@ -346,9 +346,9 @@
     {
       "table": 7,
       "name": "Role lifecycle: overhead",
-      "expected": -10.9,
+      "expected": -10.8,
       "measured": -10.846708908832877,
-      "delta": 0.05329109116712338,
+      "delta": -0.04670890883287626,
       "tolerance": 0.1,
       "unit": "%",
       "status": "PASS",
@@ -356,7 +356,7 @@
     },
     {
       "table": 7,
-      "name": "Role-registry deployment",
+      "name": "Role registry / compartment: hand-written",
       "expected": 161345,
       "measured": 161345,
       "delta": 0,
@@ -367,7 +367,7 @@
     },
     {
       "table": 7,
-      "name": "Compartment deployment",
+      "name": "Role registry / compartment: SocialRbSC",
       "expected": 1266714,
       "measured": 1266714,
       "delta": 0,
@@ -378,7 +378,29 @@
     },
     {
       "table": 7,
-      "name": "Role-behaviour deployment",
+      "name": "Role registry / compartment: overhead",
+      "expected": 685.1,
+      "measured": 685.0965322755586,
+      "delta": -0.003467724441406972,
+      "tolerance": 0.1,
+      "unit": "%",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "table": 7,
+      "name": "Role-behaviour deployment: hand-written",
+      "expected": 182141,
+      "measured": 182141,
+      "delta": 0,
+      "tolerance": 0,
+      "unit": "gas",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "table": 7,
+      "name": "Role-behaviour deployment: SocialRbSC",
       "expected": 501965,
       "measured": 501965,
       "delta": 0,
@@ -389,14 +411,14 @@
     },
     {
       "table": 7,
-      "name": "Role lifecycle: reported overhead is correctly rounded",
-      "expected": -10.9,
-      "measured": -10.8,
-      "delta": 0.09999999999999964,
-      "tolerance": null,
+      "name": "Role-behaviour deployment: overhead",
+      "expected": 175.6,
+      "measured": 175.59143740289116,
+      "delta": -0.00856259710883478,
+      "tolerance": 0.1,
       "unit": "%",
-      "status": "WARN",
-      "note": "raw overhead -10.847%; nearest tenth is -10.8%"
+      "status": "PASS",
+      "note": ""
     },
     {
       "table": 8,
@@ -1643,9 +1665,9 @@
     }
   ],
   "summary": {
-    "pass": 146,
+    "pass": 149,
     "fail": 0,
-    "warn": 1,
+    "warn": 0,
     "skip": 1
   }
 }

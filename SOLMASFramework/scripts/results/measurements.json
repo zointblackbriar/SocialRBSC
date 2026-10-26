@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-25T02:12:51.021Z",
+  "generatedAt": "2026-10-26T22:44:01.618Z",
   "environment": {
     "hardhat": "2.29.1",
     "ethers": "ethers/5.8.0",
@@ -24,6 +24,7 @@
       },
       "deployments": {
         "roleRegistry": 161345,
+        "baselineRoleBehaviour": 182141,
         "compartment": 1266714,
         "roleBehaviour": 501965
       }

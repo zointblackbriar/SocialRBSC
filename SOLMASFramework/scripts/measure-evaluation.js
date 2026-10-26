@@ -42,7 +42,7 @@ async function main() {
 
   console.log(`Role binding  : baseline=${regBind}  socialrbsc=${socBind}  delta=${socBind - regBind}`);
   console.log(`FSM lifecycle : baseline=${fsmGas}  socialrbsc=${roleGas}  delta=${roleGas - fsmGas}`);
-  console.log(`Deploy        : baseline-registry=${baseReg.gas}  compartment=${mission.gas}  role-behavior=${role.gas}`);
+  console.log(`Deploy        : baseline-registry=${baseReg.gas}  baseline-fsm=${baseFsm.gas}  compartment=${mission.gas}  role-behavior=${role.gas}`);
 
   console.log("\n===== B. END-TO-END MEDICAL SUPPLY LIFECYCLE =====");
   const comp = await deploy("MedicalSupplyMission");

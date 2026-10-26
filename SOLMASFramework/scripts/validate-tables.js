@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { measureAll } = require("./lib/measure");
+const { measureAll, percentageDelta } = require("./lib/measure");
 const { TABLE6, TABLE7, TABLE8, TABLE9, TABLE10, TABLE11 } = require("./lib/table-data");
 
 const checks = [];
@@ -270,9 +270,27 @@ function validateTable7(measured) {
     unit: "%",
   });
 
-  compare(7, "Role-registry deployment", TABLE7.rows[2].handWritten, measured.deployments.roleRegistry);
-  compare(7, "Compartment deployment", TABLE7.rows[3].socialrbsc, measured.deployments.compartment);
-  compare(7, "Role-behaviour deployment", TABLE7.rows[4].socialrbsc, measured.deployments.roleBehaviour);
+  const deployment = TABLE7.rows[2];
+  compare(7, "Role registry / compartment: hand-written", deployment.handWritten, measured.deployments.roleRegistry);
+  compare(7, "Role registry / compartment: SocialRbSC", deployment.socialrbsc, measured.deployments.compartment);
+  compare(
+    7,
+    "Role registry / compartment: overhead",
+    deployment.overheadPct,
+    percentageDelta(measured.deployments.compartment, measured.deployments.roleRegistry),
+    { tolerance: 0.1, unit: "%" }
+  );
+
+  const behaviour = TABLE7.rows[3];
+  compare(7, "Role-behaviour deployment: hand-written", behaviour.handWritten, measured.deployments.baselineRoleBehaviour);
+  compare(7, "Role-behaviour deployment: SocialRbSC", behaviour.socialrbsc, measured.deployments.roleBehaviour);
+  compare(
+    7,
+    "Role-behaviour deployment: overhead",
+    behaviour.overheadPct,
+    percentageDelta(measured.deployments.roleBehaviour, measured.deployments.baselineRoleBehaviour),
+    { tolerance: 0.1, unit: "%" }
+  );
 
   const roundedLifecycle = Math.round(measured.lifecycle.overheadPct * 10) / 10;
   if (Math.abs(roundedLifecycle - lifecycle.overheadPct) > 1e-9) {
@@ -385,7 +403,7 @@ function validateTable9(measured) {
 
 function validateTable10(measured) {
   const measuredByA = new Map(measured.map((row) => [row.A, row]));
-  const deployment = TABLE7.rows[3].socialrbsc;
+  const deployment = TABLE7.rows.find((row) => row.operation.includes("compartment")).socialrbsc;
 
   for (const row of TABLE10.rows) {
     const actual = measuredByA.get(row.A);
